@@ -594,7 +594,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 2px;
     background: var(--line);
-    max-width: var(--max);
+    max-width: 1400px;
     margin: 0 auto;
   }
   @media (max-width: 900px){ .proj-grid{ grid-template-columns: repeat(2, 1fr); } }
@@ -668,11 +668,11 @@
 
   /* ---------- SKILLS ---------- */
   .skill-groups{
-    max-width: 720px;
+    max-width: 980px;
     margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    gap: 40px 56px;
     text-align: center;
   }
   @media (max-width: 700px){ .skill-groups{ grid-template-columns: 1fr; gap: 32px; } }
@@ -682,15 +682,15 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--accent-deep);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
-  .skill-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; justify-content: center; }
+  .skill-tags{ display:flex; flex-wrap: wrap; gap: 14px 8px; justify-content: center; }
   .skill-tag{
     font-family: var(--label);
     font-size: 1.15rem;
     color: var(--ink-dim);
   }
-  .skill-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+  .skill-tag:not(:last-child)::after{ content:"·"; margin-left: 14px; color: var(--ink-faint); }
 
   footer{ padding: 76px 0 0; border-top: 1px solid var(--line); background: var(--bg-panel); }
   .footer-grid{
