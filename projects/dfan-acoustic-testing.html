@@ -349,10 +349,11 @@
     <h2 data-i18n="h2-coherence">Coherence Testing</h2>
     <p data-i18n="coh-p1">As part of my work with RAL Space, I contributed to the development and evaluation of microphone coherence testing methods for DFAN, conducted in close collaboration with <strong>Professor Jonathan Hargreaves</strong> at the <strong>University of Salford</strong>, drawing on his acoustics expertise to refine our experimental methodology and data interpretation.</p>
     <p data-i18n="coh-p2">I helped configure microphone arrays and run tests measuring <strong>spatial coherence (γ²)</strong> between microphone pairs, the key metric for verifying whether the sound field a DFAN system generates is sufficiently diffuse and uniform, rather than concentrated or spatially correlated in ways that wouldn't match a real launch environment.</p>
+    <p data-i18n="coh-p2b">All of this, running the tests, computing coherence, and producing the plot below, was done through <strong>Amplify</strong>, the software tool I built to run this testing process.</p>
 
     <div class="figure-card figure-card--sm">
       <img src="dfan_res.png" alt="Coherence heatmap comparing measured microphone coherence against the theoretical sinc-squared model, plotted against normalized distance">
-      <div class="figure-caption" data-i18n="fig-coherence"><strong>Measured coherence versus the theoretical model.</strong> The heatmap shows the density of individual measured coherence values; the red line is their mean, and the black dashed line is the theoretical sinc²(kr) trend a perfectly diffuse field would follow, plotted against normalised distance (kr/π = r/2λ). Comparing the two is what tells you whether the test environment is behaving the way theory says it should.</div>
+      <div class="figure-caption" data-i18n="fig-coherence"><strong>Measured coherence versus the theoretical model, generated with Amplify at RAL Space.</strong> The heatmap shows the density of individual measured coherence values; the red line is their mean, and the black dashed line is the theoretical sinc²(kr) trend a perfectly diffuse field would follow, plotted against normalised distance (kr/π = r/2λ). Comparing the two is what tells you whether the test environment is behaving the way theory says it should.</div>
     </div>
 
     <p data-i18n="coh-p3">The closer the measured mean tracks the theoretical curve, the more confidence you can have that the microphone spacing and array configuration are producing a genuinely diffuse field, which is exactly what a DFAN setup needs to faithfully replicate launch conditions.</p>
@@ -451,7 +452,8 @@
     'h2-coherence': '相干性测试',
     'coh-p1': '作为我在 RAL Space 工作的一部分，我参与了 DFAN 麦克风相干性测试方法的开发与评估，该项目与<strong>索尔福德大学</strong>的 <strong>Jonathan Hargreaves 教授</strong>密切合作完成，借助他在声学领域的专业知识来完善我们的实验方法与数据解读。',
     'coh-p2': '我协助配置了麦克风阵列，并进行了测量麦克风对之间<strong>空间相干性（γ²）</strong>的测试，这是判断 DFAN 系统产生的声场是否足够扩散均匀的关键指标，而不是集中或存在空间相关性，那样会与真实发射环境不符。',
-    'fig-coherence': '<strong>实测相干性与理论模型的对比。</strong>热力图展示了各次实测相干性数值的分布密度；红线为其均值，黑色虚线为理想扩散场应遵循的理论 sinc²(kr) 趋势，横轴为归一化距离（kr/π = r/2λ）。将两者对比，就能判断测试环境的表现是否符合理论预期。',
+    'coh-p2b': '这一切，运行测试、计算相干性、生成下方的图表，都是通过 <strong>Amplify</strong> 完成的，这是我为运行这套测试流程而开发的软件工具。',
+    'fig-coherence': '<strong>实测相干性与理论模型的对比，使用 Amplify 在 RAL Space 生成。</strong>热力图展示了各次实测相干性数值的分布密度；红线为其均值，黑色虚线为理想扩散场应遵循的理论 sinc²(kr) 趋势，横轴为归一化距离（kr/π = r/2λ）。将两者对比，就能判断测试环境的表现是否符合理论预期。',
     'coh-p3': '实测均值与理论曲线的吻合程度越高，就越能确信麦克风间距与阵列配置正在产生真正扩散的声场，这正是 DFAN 系统真实还原发射条件所需要的。',
     'coh-p4': '这里有个关键细节：每一对麦克风之间的物理距离都不相同，因此它们的相干性-频率曲线默认并不会落在同一条轴上，即便在完全相同的声场中，间距10厘米的一对麦克风和间距50厘米的一对麦克风，也会在完全不同的频率上失去相关性。通过用每对麦克风各自的间距对其频率轴进行归一化，使用无量纲量 <em>kr</em>（波数 × 间距），就能把所有麦克风对放到同一可比较的尺度上。这正是上方密度图得以实现的原理：来自每一种麦克风组合、成千上万个独立的相干性数值，全部落在同一条共享坐标轴上，与理论曲线直接比较。',
     'coh-p5': '这项工作是索尔福德大学声学研究中心更广泛的 DFAN 研究工作的一部分，Hargreaves 教授曾公开撰文介绍该团队的缩比 DFAN 测试（见下方链接），可作为理解这项相干性工作所验证环境的良好背景资料。',
@@ -511,7 +513,11 @@
   }
 
   var savedLang = localStorage.getItem('site-lang');
-  if(savedLang === 'zh') setLang('zh');
+  if(savedLang === 'zh'){
+    setLang('zh');
+  } else if(!savedLang && navigator.language && navigator.language.toLowerCase().indexOf('zh') === 0){
+    setLang('zh');
+  }
 </script>
 
 </body>

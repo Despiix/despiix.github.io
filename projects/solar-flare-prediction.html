@@ -660,7 +660,11 @@
   }
 
   var savedLang = localStorage.getItem('site-lang');
-  if(savedLang === 'zh') setLang('zh');
+  if(savedLang === 'zh'){
+    setLang('zh');
+  } else if(!savedLang && navigator.language && navigator.language.toLowerCase().indexOf('zh') === 0){
+    setLang('zh');
+  }
 </script>
 
 </body>
