@@ -594,6 +594,8 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 2px;
     background: var(--line);
+    max-width: var(--max);
+    margin: 0 auto;
   }
   @media (max-width: 900px){ .proj-grid{ grid-template-columns: repeat(2, 1fr); } }
 
@@ -685,7 +687,7 @@
   .skill-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; justify-content: center; }
   .skill-tag{
     font-family: var(--label);
-    font-size: 0.85rem;
+    font-size: 1.15rem;
     color: var(--ink-dim);
   }
   .skill-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
