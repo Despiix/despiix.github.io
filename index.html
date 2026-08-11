@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Despina</title>
+<meta name="description" content="Despina — Computer Science graduate, machine learning for space weather, incoming MSc Advanced Computing at Tsinghua University.">
+<script>
+  (function(){
+    var t = localStorage.getItem('site-theme') || 'dark';
+    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<style>
+  :root{
+    /* warm blush → coral, pulled from the reference */
+    --grad-top: #f8ded3;
+    --grad-mid: #f0ae93;
+    --grad-bottom: #dd7a58;
+
+    --bg: #fdf3ec;
+    --bg-panel: #f9e8dd;
+    --ink: #2b2019;
+    --ink-dim: #6f5b4c;
+    --ink-faint: #a4917f;
+    --hero-ink: #fffaf5;
+    --hero-ink-dim: rgba(255,250,245,0.86);
+
+    --accent: #d9714a;
+    --accent-deep: #b85535;
+    --line: rgba(43,32,25,0.13);
+    --line-strong: rgba(43,32,25,0.24);
+    --hero-glow: rgba(184,85,53,0.6);
+
+    --display: 'Space Grotesk', 'Jost', sans-serif;
+    --body-serif: 'Inter', 'Jost', sans-serif;
+    --label: 'Jost', 'Inter', sans-serif;
+    --max: 1040px;
+
+    --nav-bg: rgba(253,243,236,0.72);
+  }
+
+  :root[data-theme="dark"]{
+    --grad-top: #260c31;
+    --grad-mid: #671372;
+    --grad-bottom: #7a3c22;
+
+    --bg: #16120e;
+    --bg-panel: #201a15;
+    --ink: #f1e6db;
+    --ink-dim: #c4b3a2;
+    --ink-faint: #8d7a68;
+    --line: rgba(241,230,219,0.12);
+    --line-strong: rgba(241,230,219,0.22);
+
+    --accent: #e8935f;
+    --accent-deep: #f0a877;
+
+    --nav-bg: rgba(22,18,14,0.72);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-serif);
+    font-size: 1.15rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* sparse ambient starfield across the whole page, dark mode only */
+  body::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    background-image:
+      radial-gradient(1.2px 1.2px at 6% 14%, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 28% 52%, rgba(255,255,255,0.35), transparent),
+      radial-gradient(1.2px 1.2px at 54% 22%, rgba(255,255,255,0.45), transparent),
+      radial-gradient(1px 1px at 78% 60%, rgba(255,255,255,0.32), transparent),
+      radial-gradient(1.2px 1.2px at 92% 30%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1.2px 1.2px at 42% 92%, rgba(255,255,255,0.4), transparent),
+      radial-gradient(1px 1px at 66% 78%, rgba(255,255,255,0.3), transparent);
+    background-size: 700px 900px;
+    background-repeat: repeat;
+  }
+  :root[data-theme="dark"] body::before{
+    opacity: 1;
+    animation: twinkle 8s ease-in-out infinite;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .wrap{
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+  }
+
+  .label{
+    font-family: var(--label);
+    font-weight: 400;
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: flex-end;
+    height: 68px;
+    padding: 0 40px;
+  }
+  .nav-links{
+    display:flex;
+    gap: 34px;
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+  .nav-links a{ transition: color 0.25s ease; }
+  .nav-links a:hover{ color: var(--accent-deep); }
+  @media (max-width: 640px){ .nav-links{ gap: 14px; } .nav-links a:nth-child(3), .nav-links a:nth-child(4){ display:none; } }
+
+  .nav-right{ display: flex; align-items: center; gap: 26px; }
+  .lang-toggle{
+    font-family: var(--label);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .lang-toggle:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+
+  .theme-toggle{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover{ border-color: var(--accent-deep); transform: rotate(12deg); }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    background: linear-gradient(165deg, var(--grad-top) 0%, var(--grad-mid) 55%, var(--grad-bottom) 100%);
+    padding: 56px 0 64px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s ease;
+  }
+  header.hero::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 140px;
+    background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
+    pointer-events: none;
+    transition: background-color 0.3s ease;
+  }
+  header.hero .wrap{
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-stars{
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    background-image:
+      radial-gradient(1.6px 1.6px at 10% 22%, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1.2px 1.2px at 32% 68%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.6px 1.6px at 58% 15%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(1.2px 1.2px at 76% 48%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.6px 1.6px at 88% 78%, rgba(255,255,255,0.85), transparent),
+      radial-gradient(1.2px 1.2px at 20% 85%, rgba(255,255,255,0.55), transparent),
+      radial-gradient(1.6px 1.6px at 46% 40%, rgba(255,255,255,0.75), transparent),
+      radial-gradient(1.2px 1.2px at 66% 90%, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.2px 1.2px at 95% 25%, rgba(255,255,255,0.65), transparent);
+  }
+  :root[data-theme="dark"] .hero-stars{
+    opacity: 1;
+    animation: twinkle 6s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  .hero-eyebrow{
+    color: var(--hero-ink-dim);
+    margin-bottom: 14px;
+    text-shadow: 0 0 10px var(--hero-glow), 0 1px 3px var(--hero-glow);
+  }
+  h1.name{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.6rem, 7vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    color: var(--hero-ink);
+    margin-bottom: 36px;
+    text-shadow: 0 0 16px var(--hero-glow), 0 2px 6px var(--hero-glow);
+  }
+  .hero-row{
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .hero-photo{
+    width: 168px;
+    height: 168px;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    border: 1.5px dashed rgba(255,250,245,0.55);
+    background: rgba(255,250,245,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--hero-ink-dim);
+    overflow: hidden;
+  }
+  .hero-photo img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero-photo .plus{
+    font-family: var(--display);
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--hero-ink);
+  }
+  .hero-photo span.lbl{
+    font-family: var(--label);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .hero-tagline{
+    font-family: var(--body-serif);
+    font-weight: 500;
+    font-size: clamp(1.15rem, 2vw, 1.32rem);
+    color: var(--hero-ink);
+    text-shadow: 0 0 12px var(--hero-glow), 0 1px 4px var(--hero-glow);
+    max-width: 380px;
+    flex: 1;
+    min-width: 220px;
+  }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{
+    padding: 96px 0;
+    border-top: 1px solid var(--line);
+  }
+  header.hero + section{
+    padding-top: 56px;
+    border-top: none;
+  }
+  .section-head{
+    display:flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 52px;
+    text-align: center;
+  }
+  h2{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2rem, 4.5vw, 2.6rem);
+  }
+
+  /* ---------- ABOUT (with fine-line flare figure) ---------- */
+  /* ---------- AWARDS ---------- */
+  .awards-intro{
+    max-width: 480px;
+    margin: -24px auto 44px;
+    text-align: center;
+    color: var(--ink-dim);
+    font-size: 1rem;
+  }
+  .awards-list{ max-width: 660px; margin: 0 auto; }
+  .award-item{
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    gap: 26px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+  .award-item:first-child{ border-top: none; }
+  .award-year{
+    font-family: var(--label);
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding-top: 3px;
+  }
+  .award-title{
+    font-family: var(--display);
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .award-org{
+    font-family: var(--label);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    color: var(--accent-deep);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .award-desc{ color: var(--ink-dim); font-size: 0.92rem; }
+  .award-item.add{
+    color: var(--ink-faint);
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    align-items: center;
+  }
+  .award-item.add .award-year{ visibility: hidden; }
+
+  .posters-heading{
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    text-align: center;
+    margin: 56px 0 24px;
+  }
+  .posters-grid{
+    max-width: 880px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 620px){ .posters-grid{ grid-template-columns: 1fr; max-width: 380px; } }
+  .poster-tile{ cursor: pointer; }
+  .poster-thumb{
+    aspect-ratio: 3 / 4;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 6px 18px rgba(43,32,25,0.12);
+    background: var(--bg-panel);
+  }
+  .poster-thumb img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+  .poster-tile:hover .poster-thumb{ transform: translateY(-4px); box-shadow: 0 12px 24px rgba(43,32,25,0.18); }
+  .poster-label{
+    text-align: center;
+    font-family: var(--body-serif);
+    font-size: 0.92rem;
+    color: var(--ink-dim);
+    margin-top: 10px;
+  }
+
+  .poster-modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(17,12,8,0.86);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 200;
+    padding: 60px 30px;
+  }
+  .poster-modal.open{ opacity: 1; pointer-events: auto; }
+  .poster-modal-inner{
+    position: relative;
+    max-width: min(900px, 100%);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: scale(0.96) translateY(10px);
+    transition: transform 0.3s ease;
+  }
+  .poster-modal.open .poster-modal-inner{ transform: scale(1) translateY(0); }
+  .poster-modal-img{
+    max-width: 100%;
+    max-height: calc(100vh - 160px);
+    border-radius: 4px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.5);
+    background: #fff;
+    display: block;
+  }
+  .poster-modal-caption{
+    margin-top: 18px;
+    font-family: var(--display);
+    font-size: 1.15rem;
+    color: var(--hero-ink);
+    text-align: center;
+  }
+  .poster-close{
+    position: absolute;
+    top: -18px;
+    right: -18px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--label);
+    font-size: 1rem;
+    color: var(--ink-dim);
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .poster-close:hover{ color: var(--accent-deep); border-color: var(--accent-deep); transform: rotate(90deg); }
+  @media (max-width: 640px){
+    .poster-close{ top: -46px; right: 0; }
+  }
+
+  /* ---------- EXPERIENCE / EDUCATION ---------- */
+  .exp-edu-grid{
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 64px;
+    max-width: 880px;
+    margin: 0 auto;
+  }
+  @media (max-width: 760px){ .exp-edu-grid{ grid-template-columns: 1fr; gap: 52px; } }
+
+  .col-title{
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    margin-bottom: 24px;
+  }
+
+  .entry{
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--line);
+  }
+  .entry:first-child{ border-top: none; padding-top: 0; }
+
+  .badge{
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--label);
+    font-weight: 500;
+    font-size: 0.62rem;
+    letter-spacing: 0.02em;
+    text-align: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .badge img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .entry-role{
+    font-family: var(--display);
+    font-size: 1.18rem;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+  .entry-org{
+    font-family: var(--label);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .entry-date{
+    font-family: var(--label);
+    font-size: 0.66rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .entry-desc{ color: var(--ink-dim); font-size: 0.94rem; }
+  .entry-desc ul{ padding-left: 18px; margin-top: 4px; }
+  .entry-desc li{ margin-bottom: 4px; }
+
+  #exp-more{
+    display: grid;
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    transition: grid-template-rows 0.4s ease;
+  }
+  #exp-more.open{ grid-template-rows: 1fr; }
+  #exp-more > div{ min-height: 0; }
+
+  .exp-toggle{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+  .exp-toggle .chev{
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-family: var(--body-serif);
+    font-size: 1rem;
+  }
+  .exp-toggle.open .chev{ transform: rotate(180deg); }
+
+  /* ---------- PROJECTS — photo grid ---------- */
+  #projects{ padding-bottom: 0; }
+  .proj-intro{
+    max-width: 520px;
+    margin: -24px auto 44px;
+    text-align: center;
+    color: var(--ink-dim);
+    font-size: 1.02rem;
+  }
+  .proj-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--line);
+  }
+  @media (max-width: 900px){ .proj-grid{ grid-template-columns: repeat(2, 1fr); } }
+
+  .proj-tile{
+    position: relative;
+    aspect-ratio: 3 / 4;
+    overflow: hidden;
+    display: block;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--bg-panel);
+  }
+  .proj-tile .overlay{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px 18px 16px;
+    background: linear-gradient(0deg, rgba(20,12,7,0.92) 0%, rgba(20,12,7,0.55) 32%, transparent 75%);
+    color: #fffaf5;
+    transition: opacity 0.3s ease;
+  }
+  .proj-tile:hover .overlay{ opacity: 1; }
+  .proj-tile .p-tag{
+    font-family: var(--label);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 3px;
+    display: block;
+  }
+  .proj-tile .p-title{
+    font-family: var(--display);
+    font-size: 1.15rem;
+  }
+  .proj-tile:hover{ filter: brightness(1.04); }
+
+  .proj-tile.add{
+    background: var(--bg-panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    color: var(--ink-faint);
+    cursor: default;
+  }
+  .proj-tile.add .plus{
+    font-family: var(--display);
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+  .proj-tile.add span.lbl{
+    font-family: var(--label);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .proj-note{
+    text-align: center;
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    padding: 18px 0 0;
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-groups{
+    max-width: 720px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    text-align: center;
+  }
+  @media (max-width: 700px){ .skill-groups{ grid-template-columns: 1fr; gap: 32px; } }
+  .skill-group-title{
+    font-family: var(--label);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    margin-bottom: 16px;
+  }
+  .skill-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; justify-content: center; }
+  .skill-tag{
+    font-family: var(--label);
+    font-size: 0.85rem;
+    color: var(--ink-dim);
+  }
+  .skill-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+
+  footer{ padding: 76px 0 0; border-top: 1px solid var(--line); background: var(--bg-panel); }
+  .footer-grid{
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 56px;
+  }
+  @media (max-width: 700px){ .footer-grid{ grid-template-columns: 1fr; gap: 44px; } }
+
+  .footer-name{
+    font-family: var(--display);
+    font-size: 1.5rem;
+    color: var(--accent-deep);
+    margin-bottom: 8px;
+  }
+  .footer-tagline{
+    font-family: var(--label);
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    color: var(--ink-dim);
+    margin-bottom: 24px;
+  }
+  .footer-socials{ display: flex; flex-direction: column; gap: 12px; }
+  .footer-link{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--label);
+    font-size: 0.82rem;
+    color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .footer-link:hover{ color: var(--accent-deep); }
+  .footer-ico{
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--label);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--accent-deep);
+    flex-shrink: 0;
+    overflow: hidden;
+    padding: 6px;
+  }
+  .footer-ico img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .footer-heading{
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+  }
+  .footer-list{ display: flex; flex-direction: column; gap: 12px; }
+  .footer-list a, .footer-list span{
+    font-family: var(--label);
+    font-size: 0.84rem;
+    color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .footer-list a:hover{ color: var(--accent-deep); }
+
+  .footer-bottom{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+  }
+  .footer-bottom p{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-faint);
+  }
+  .back-to-top{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-dim);
+    transition: color 0.2s ease;
+  }
+  .back-to-top:hover{ color: var(--accent-deep); }
+
+  a:focus-visible, button:focus-visible{ outline: 1px solid var(--accent-deep); outline-offset: 3px; }
+
+  /* ---------- SCROLL MASCOT ---------- */
+  .bot-mascot{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 46px;
+    height: 56px;
+    z-index: 40;
+    cursor: pointer;
+    opacity: 0;
+    filter: drop-shadow(0 6px 10px rgba(43,32,25,0.18));
+    transition: opacity 0.4s ease;
+  }
+  .bot-mascot svg{ width: 100%; height: 100%; display: block; }
+
+  @media (max-width: 640px){
+    .bot-mascot{ width: 32px; height: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bot-mascot" id="botMascot" aria-hidden="true">
+  <svg viewBox="0 0 44 56" xmlns="http://www.w3.org/2000/svg">
+    <line x1="22" y1="7" x2="22" y2="1" stroke="#b85535" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="22" cy="1" r="2.4" fill="#d9714a"/>
+    <rect x="7" y="7" width="30" height="21" rx="8" fill="#fffaf5" stroke="#b85535" stroke-width="2"/>
+    <circle cx="16.5" cy="17" r="2.4" fill="#2b2019"/>
+    <circle cx="27.5" cy="17" r="2.4" fill="#2b2019"/>
+    <rect x="18" y="27" width="8" height="5" fill="#fffaf5" stroke="#b85535" stroke-width="1.6"/>
+    <rect x="5" y="32" width="34" height="19" rx="7" fill="#fffaf5" stroke="#b85535" stroke-width="2"/>
+    <circle cx="22" cy="41" r="3" fill="#d9714a"/>
+    <path d="M5 38 C -1 38 -1 46 5 46" fill="none" stroke="#b85535" stroke-width="2" stroke-linecap="round"/>
+    <path d="M39 38 C 45 38 45 46 39 46" fill="none" stroke="#b85535" stroke-width="2" stroke-linecap="round"/>
+    <rect x="12" y="49" width="7" height="7" rx="2.5" fill="#fffaf5" stroke="#b85535" stroke-width="2"/>
+    <rect x="25" y="49" width="7" height="7" rx="2.5" fill="#fffaf5" stroke="#b85535" stroke-width="2"/>
+  </svg>
+</div>
+
+<nav id="top">
+  <div class="wrap">
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#experience" data-i18n="nav-experience">Experience</a>
+        <a href="#projects" data-i18n="nav-projects">Projects</a>
+        <a href="#skills" data-i18n="nav-skills">Skills</a>
+        <a href="#awards" data-i18n="nav-awards">Presentations</a>
+      </div>
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-stars"></div>
+  <div class="wrap">
+    <div class="hero-eyebrow label" data-i18n="hero-eyebrow">MSc Computer Science · Tsinghua University, Beijing</div>
+    <h1 class="name bot-landing" data-i18n="hero-name">Despina Ioannide</h1>
+    <div class="hero-row">
+      <div class="hero-photo">
+        <img src="pfp.jpg" alt="Despina Ioannide">
+      </div>
+      <p class="hero-tagline" data-i18n="hero-tagline">A computer scientist with a research background in applied machine learning, now working toward unmanned robotic systems.</p>
+    </div>
+  </div>
+</header>
+
+<section id="experience">
+  <div class="wrap">
+    <div class="section-head"><h2 data-i18n="exp-h2" class="bot-landing">Experience</h2></div>
+    <div class="exp-edu-grid">
+
+      <div>
+        <div class="col-title" data-i18n="exp-col-title">Experience</div>
+
+        <div class="entry">
+          <div class="badge"><img src="logos/esa.png" alt="ESA"></div>
+          <div>
+            <div class="entry-role" data-i18n="esa-role">Astrophysics / Machine Learning Researcher</div>
+            <div class="entry-org" data-i18n="esa-org">European Space Agency · Internship</div>
+            <div class="entry-date" data-i18n="esa-date">Jun 2025 – Sep 2025 · Netherlands, On-site</div>
+            <div class="entry-desc">
+              <ul data-i18n="esa-bullets">
+                <li>Analysed Hinode spacecraft data to identify early signatures of solar flares using Python and predictive models.</li>
+                <li>Built tools to track spectral changes and validate flare precursors, contributing to space weather forecasting and satellite safety.</li>
+                <li>Continued this work as part of my BSc dissertation.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <div class="badge"><img src="logos/UKRI.png" alt="UKRI"></div>
+          <div>
+            <div class="entry-role" data-i18n="ukri-role">Scientific Software Engineer — Industrial Placement</div>
+            <div class="entry-org" data-i18n="ukri-org">UK Research and Innovation · Full-time</div>
+            <div class="entry-date" data-i18n="ukri-date">Jul 2024 – Jun 2025 · Oxford, England, Hybrid</div>
+            <div class="entry-desc">
+              <ul data-i18n="ukri-bullets">
+                <li>Developed software and took part in coherence testing for acoustic spacecraft tests (DFAN) at RAL Space.</li>
+                <li>Built scientific algorithms, including a Monte Carlo simulation for Mantid, and improved core data visualisation tools for UK/US particle accelerators.</li>
+                <li>Improved Mantid Imaging for faster, more precise neutron imaging.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div id="exp-more">
+          <div>
+            <div class="entry">
+              <div class="badge"><img src="logos/JPMC.png" alt="JPMorgan Chase"></div>
+              <div>
+                <div class="entry-role" data-i18n="jpmc-role">Spring Intern — Software Engineering</div>
+                <div class="entry-org" data-i18n="jpmc-org">JPMorgan Chase &amp; Co. · Internship</div>
+                <div class="entry-date" data-i18n="jpmc-date">Apr 2024 · Glasgow, Scotland, On-site</div>
+                <div class="entry-desc">
+                  <ul data-i18n="jpmc-bullets">
+                    <li>Received a direct offer for a summer internship in 2025.</li>
+                    <li>Placed second in the "Code for &lt;good&gt;" hackathon, helping Deafblind Scotland improve their software.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="entry">
+              <div class="badge"><img src="logos/amazon.jpg" alt="Amazon"></div>
+              <div>
+                <div class="entry-role" data-i18n="amzn-role">Spring Intern — Software Engineering</div>
+                <div class="entry-org" data-i18n="amzn-org">Amazon · Internship</div>
+                <div class="entry-date" data-i18n="amzn-date">Apr 2024 · London Area, Remote</div>
+                <div class="entry-desc">
+                  <ul data-i18n="amzn-bullets">
+                    <li>Placed 14th out of 144 top computer science students from across the UK and Ireland in a hackathon.</li>
+                    <li>Received mentorship from Amazon engineers.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="entry">
+              <div class="badge"><img src="logos/palantir.jpg" alt="Palantir"></div>
+              <div>
+                <div class="entry-role" data-i18n="pltr-role">Spring Intern — Software Engineering</div>
+                <div class="entry-org" data-i18n="pltr-org">Palantir Technologies · Internship</div>
+                <div class="entry-date" data-i18n="pltr-date">Mar 2024 · Greater London, On-site</div>
+                <div class="entry-desc">
+                  <ul data-i18n="pltr-bullets">
+                    <li>Presented the AIP- and Foundry-based project built over the course of the placement.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="entry">
+              <div class="badge"><img src="logos/newcastle.png" alt="Newcastle University"></div>
+              <div>
+                <div class="entry-role" data-i18n="sage-role">SAGE Student Ambassador (Computer Science)</div>
+                <div class="entry-org" data-i18n="sage-org">Newcastle University · Part-time</div>
+                <div class="entry-date" data-i18n="sage-date">Jan 2023 – Jun 2026 · Newcastle Upon Tyne, England, Hybrid</div>
+                <div class="entry-desc">
+                  <ul data-i18n="sage-bullets">
+                    <li>Hosted lectures and practical sessions in programming with Python for offer holders of the University, with over 300 students attending so far.</li>
+                    <li>Served as a judge at the VEX Robotics Competition, awarding a prize for the best use of programming techniques and design.</li>
+                    <li>Appeared in a short video about what studying at Newcastle University is like.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="exp-toggle" id="expToggleBtn" onclick="toggleExp()">
+          <span id="expToggleLabel">Show earlier roles</span>
+          <span class="chev">⌄</span>
+        </button>
+      </div>
+
+      <div>
+        <div class="col-title" data-i18n="edu-col-title">Education</div>
+
+        <div class="entry">
+          <div class="badge"><img src="logos/Tsinghua.webp" alt="Tsinghua University"></div>
+          <div>
+            <div class="entry-role" data-i18n="thu-role">Tsinghua University</div>
+            <div class="entry-org" data-i18n="thu-org">Master of Science, Advanced Computing</div>
+            <div class="entry-date" data-i18n="thu-date">2026 – 2028</div>
+            <div class="entry-desc" data-i18n="thu-desc">Full scholarship</div>
+          </div>
+        </div>
+
+        <div class="entry">
+          <div class="badge"><img src="logos/newcastle.png" alt="Newcastle University"></div>
+          <div>
+            <div class="entry-role" data-i18n="ncl-role">Newcastle University</div>
+            <div class="entry-org" data-i18n="ncl-org">Bachelor's degree, Computer Science with Industrial Placement</div>
+            <div class="entry-date" data-i18n="ncl-date">2022 – 2026</div>
+            <div class="entry-desc" data-i18n="ncl-desc">
+              Grade: 1:1 First-Class Honours — 84.3%.<br>
+              Activities: Poker Society, Rocketry Society, Dance Club, Uni Choir, Astronomy Society.<br>
+              Received a 4-year scholarship.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  var expToggleLabels = {
+    show: { en: 'Show earlier roles', zh: '显示更早的经历' },
+    hide: { en: 'Show fewer roles', zh: '收起更早的经历' }
+  };
+  function updateExpToggleLabel(){
+    var el = document.getElementById('exp-more');
+    var label = document.getElementById('expToggleLabel');
+    var isOpen = el.classList.contains('open');
+    label.textContent = expToggleLabels[isOpen ? 'hide' : 'show'][currentLang];
+  }
+  function toggleExp(){
+    var el = document.getElementById('exp-more');
+    var btn = document.getElementById('expToggleBtn');
+    var isOpen = el.classList.toggle('open');
+    btn.classList.toggle('open', isOpen);
+    updateExpToggleLabel();
+  }
+</script>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="section-head"><h2 data-i18n="proj-h2" class="bot-landing">Some of My Projects</h2></div>
+    <p class="proj-intro" data-i18n="proj-intro">A selection of research and side projects. Click through for the full story.</p>
+  </div>
+  <div class="proj-grid">
+    <a class="proj-tile" href="projects/solar-flare-prediction.html" style="background-image:url('projects/solar_flare.jpg?v=2');">
+      <div class="overlay">
+        <span class="p-tag" data-i18n="proj1-tag">Dissertation · ML</span>
+        <div class="p-title" data-i18n="proj1-title">Solar Flare Prediction</div>
+      </div>
+    </a>
+    <a class="proj-tile" href="projects/mantid.html" style="background-image:url('projects/mantid.png');">
+      <div class="overlay">
+        <span class="p-tag" data-i18n="proj2-tag">UKRI · Scientific Computing</span>
+        <div class="p-title">Mantid</div>
+      </div>
+    </a>
+    <a class="proj-tile" href="projects/mantid-imaging.html" style="background-image:url('projects/mantid_imaging.png');">
+      <div class="overlay">
+        <span class="p-tag" data-i18n="proj3-tag">UKRI · Neutron Imaging</span>
+        <div class="p-title">Mantid Imaging</div>
+      </div>
+    </a>
+    <a class="proj-tile" href="projects/personal.html" style="background-image:url('projects/personal.png');">
+      <div class="overlay">
+        <span class="p-tag" data-i18n="proj4-tag">Side Projects</span>
+        <div class="p-title" data-i18n="proj4-title">Personal Projects</div>
+      </div>
+    </a>
+  </div>
+  <p class="proj-note" data-i18n="proj-note">More projects coming soon.</p>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <div class="section-head"><h2 data-i18n="skills-h2" class="bot-landing">Skills</h2></div>
+    <div class="skill-groups">
+      <div>
+        <div class="skill-group-title" data-i18n="skills-g1">Languages &amp; Tools</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">C++</span>
+          <span class="skill-tag">C#</span>
+          <span class="skill-tag">Java</span>
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">MATLAB</span>
+          <span class="skill-tag">R</span>
+          <span class="skill-tag">Git</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title" data-i18n="skills-g2">ML &amp; Frameworks</div>
+        <div class="skill-tags">
+          <span class="skill-tag">PyTorch</span>
+          <span class="skill-tag">TensorFlow / Keras</span>
+          <span class="skill-tag">scikit-learn</span>
+          <span class="skill-tag">SunPy</span>
+          <span class="skill-tag">Astropy</span>
+          <span class="skill-tag">Pandas</span>
+          <span class="skill-tag">NumPy</span>
+          <span class="skill-tag">ROS2</span>
+        </div>
+      </div>
+      <div>
+        <div class="skill-group-title" data-i18n="skills-g3">Domains</div>
+        <div class="skill-tags">
+          <span class="skill-tag" data-i18n="skill-solar">Solar physics</span>
+          <span class="skill-tag" data-i18n="skill-spaceweather">Space weather</span>
+          <span class="skill-tag" data-i18n="skill-sattest">Satellite testing</span>
+          <span class="skill-tag" data-i18n="skill-plasma">Plasma physics</span>
+          <span class="skill-tag" data-i18n="skill-cubesat">CubeSat systems</span>
+          <span class="skill-tag" data-i18n="skill-appliedml">Applied ML</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="awards">
+  <div class="wrap">
+    <div class="section-head"><h2 data-i18n="awards-h2" class="bot-landing">Presentations</h2></div>
+    <p class="awards-intro" data-i18n="awards-intro">A few key presentations along the way.</p>
+    <div class="awards-list">
+      <div class="award-item">
+        <div class="award-year">2026</div>
+        <div>
+          <div class="award-title" data-i18n="award1-title">Outstanding Performance &amp; Best Poster Award</div>
+          <div class="award-org" data-i18n="award1-org">Newcastle University · July 2026, across cohort</div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2025</div>
+        <div>
+          <div class="award-title" data-i18n="award2-title">Research Seminar: Life in Science and the Importance of Computing in It — A RAL Space Intern's Perspective</div>
+          <div class="award-org" data-i18n="award2-org">University of Salford · Webinar, 2 Apr 2025</div>
+          <div class="award-desc" data-i18n="award2-desc">Invited talk on life in science and the role of computing in it, drawing on experience as a Scientific Software Engineering Intern at RAL Space (STFC).</div>
+        </div>
+      </div>
+      <div class="award-item">
+        <div class="award-year">2024</div>
+        <div>
+          <div class="award-title" data-i18n="award3-title">AIAA Best Paper Award — SmallSat Conference</div>
+          <div class="award-org" data-i18n="award3-org">Judged by NASA JPL &amp; MIT reviewers</div>
+          <div class="award-desc" data-i18n="award3-desc">Co-authored "Propulsion System Design and Sensitivity Analysis of Sub-10cm Debris Detection CubeSat Mission," and produced the accompanying simulations.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="posters-heading" data-i18n="posters-heading">Posters</div>
+    <div class="posters-grid">
+      <div class="poster-tile" onclick="openPoster('posters/bsc-dissertation-poster-full.jpg','bsc')">
+        <div class="poster-thumb">
+          <img src="posters/bsc-dissertation-poster-thumb.jpg" alt="BSc Dissertation poster">
+        </div>
+        <div class="poster-label" data-i18n="poster1-label">BSc Dissertation & ESA Internship</div>
+      </div>
+      <div class="poster-tile" onclick="openPoster('posters/industrial-placement-poster-full.jpg','ip')">
+        <div class="poster-thumb">
+          <img src="posters/industrial-placement-poster-thumb.jpg" alt="Industrial Placement poster">
+        </div>
+        <div class="poster-label" data-i18n="poster2-label">Industrial Placement</div>
+      </div>
+      <div class="poster-tile" onclick="openPoster('posters/smallsat-conference-poster-full.jpg','smallsat')">
+        <div class="poster-thumb">
+          <img src="posters/smallsat-conference-poster-thumb.jpg" alt="SmallSat Conference poster">
+        </div>
+        <div class="poster-label" data-i18n="poster3-label">SmallSat Conference</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="poster-modal" id="posterModal" onclick="if(event.target===this) closePoster()">
+  <div class="poster-modal-inner">
+    <button class="poster-close" onclick="closePoster()" aria-label="Close">✕</button>
+    <img class="poster-modal-img" id="posterModalImg" src="" alt="">
+    <div class="poster-modal-caption" id="posterModalTitle"></div>
+  </div>
+</div>
+
+<script>
+  var posterTitles = {
+    bsc: { en: 'BSc Dissertation', zh: '本科毕业论文' },
+    ip: { en: 'Industrial Placement', zh: '行业实习' },
+    smallsat: { en: 'SmallSat Conference', zh: 'SmallSat 会议' }
+  };
+  function openPoster(imgSrc, key){
+    var title = posterTitles[key] ? posterTitles[key][currentLang] : key;
+    document.getElementById('posterModalImg').src = imgSrc;
+    document.getElementById('posterModalImg').alt = title + ' poster';
+    document.getElementById('posterModalTitle').textContent = title;
+    document.getElementById('posterModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePoster(){
+    document.getElementById('posterModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closePoster();
+  });
+</script>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-name bot-landing">Despina Ioannide</div>
+        <div class="footer-tagline" data-i18n="footer-tagline">CS student · Applied ML · Space &amp; robotics</div>
+        <div class="footer-socials">
+          <a class="footer-link" href="https://github.com/Despiix" target="_blank" rel="noopener"><span class="footer-ico"><img src="logos/github.png" alt="GitHub"></span> github.com/Despiix</a>
+          <a class="footer-link" href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener"><span class="footer-ico"><img src="logos/linkedin.png" alt="LinkedIn"></span> linkedin.com/in/yourusername</a>
+          <a class="footer-link" href="https://medium.com/@despinaioannide" target="_blank" rel="noopener"><span class="footer-ico"><img src="logos/medium.webp" alt="Medium"></span> medium.com/@despinaioannide</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading" data-i18n="footer-nav-heading">Navigation</div>
+        <div class="footer-list">
+          <a href="#experience" data-i18n="nav-experience">Experience</a>
+          <a href="#projects" data-i18n="nav-projects">Projects</a>
+          <a href="#skills" data-i18n="nav-skills">Skills</a>
+          <a href="#awards" data-i18n="footer-recognition">Presentations</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading" data-i18n="footer-contact-heading">Contact</div>
+        <div class="footer-list">
+          <a href="mailto:d.ioannide2@newcastle.ac.uk"><span class="footer-ico" style="border-radius:6px;">✉</span> d.ioannide2@newcastle.ac.uk</a>
+          <a href="mailto:d.ioannide2@newcastle.ac.uk?subject=CV%20request"><span class="footer-ico" style="border-radius:6px;">📄</span> <span data-i18n="footer-resume">Request my CV</span></a>
+          <span data-i18n="footer-location">Beijing, China</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-i18n="footer-copyright">© 2026 Despina Ioannide. All rights reserved.</p>
+      <a class="back-to-top" href="#top" data-i18n="footer-back-to-top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  var zhDict = {
+    'nav-experience': '工作经历',
+    'nav-projects': '项目',
+    'nav-skills': '技能',
+    'nav-awards': '展示',
+
+    'hero-name': 'Despina Ioannide · 碧娜',
+    'hero-eyebrow': '计算机科学 · 清华大学，北京',
+    'hero-tagline': '计算机科学家，拥有应用机器学习的研究背景，目前致力于无人机器人系统的研究。',
+
+    'exp-h2': '工作经历',
+    'exp-col-title': '工作经历',
+
+    'esa-role': '天体物理与机器学习研究员',
+    'esa-org': '欧洲航天局 · 实习',
+    'esa-date': '2025年6月–9月 · 荷兰，现场办公',
+    'esa-bullets': '<li>使用 Python 和预测模型分析 Hinode 卫星数据，识别太阳耀斑的早期特征。</li><li>开发工具追踪光谱变化并验证耀斑前兆，为空间天气预报和卫星安全做出贡献。</li><li>该研究后续作为本科毕业论文的一部分继续开展。</li>',
+
+    'ukri-role': '科学软件工程师 — 行业实习',
+    'ukri-org': '英国研究与创新署（UKRI）· 全职',
+    'ukri-date': '2024年7月 – 2025年6月 · 英国牛津，混合办公',
+    'ukri-bullets': '<li>在 RAL Space 参与航天器声学测试（DFAN）的相干性测试，并开发相关软件。</li><li>开发科学算法，包括为 Mantid 构建蒙特卡洛模拟，并改进英美粒子加速器的核心数据可视化工具。</li><li>改进 Mantid Imaging，实现更快、更精确的中子成像。</li>',
+
+    'jpmc-role': '春季实习生 — 软件工程',
+    'jpmc-org': '摩根大通公司 · 实习',
+    'jpmc-date': '2024年4月 · 英国格拉斯哥，现场办公',
+    'jpmc-bullets': '<li>获得2025年暑期实习的直接录用。</li><li>在 "Code for &lt;good&gt;" 黑客马拉松中获得第二名，帮助 Deafblind Scotland 改进其软件。</li>',
+
+    'amzn-role': '春季实习生 — 软件工程',
+    'amzn-org': '亚马逊 · 实习',
+    'amzn-date': '2024年4月 · 英国伦敦地区，远程',
+    'amzn-bullets': '<li>在一场黑客马拉松中，从英国和爱尔兰144名顶尖计算机科学学生中排名第14。</li><li>获得亚马逊工程师的指导。</li>',
+
+    'pltr-role': '春季实习生 — 软件工程',
+    'pltr-org': 'Palantir Technologies · 实习',
+    'pltr-date': '2024年3月 · 大伦敦地区，现场办公',
+    'pltr-bullets': '<li>展示了实习期间基于 AIP 和 Foundry 构建的项目。</li>',
+
+    'sage-role': 'SAGE 学生大使（计算机科学）',
+    'sage-org': '纽卡斯尔大学 · 兼职',
+    'sage-date': '2023年1月 – 2026年6月 · 英国纽卡斯尔，混合办公',
+    'sage-bullets': '<li>为学校的预录取学生主持 Python 编程讲座和实践课程，累计已有超过300名学生参加。</li><li>担任 VEX 机器人竞赛评委，评选最佳编程技巧与设计奖项。</li><li>出镜介绍在纽卡斯尔大学求学体验的短视频。</li>',
+
+    'edu-col-title': '教育背景',
+
+    'thu-role': '清华大学',
+    'thu-org': '理学硕士，Advanced Computing',
+    'thu-date': '2026年9月 – 2028年6月',
+    'thu-desc': '全额奖学金',
+
+    'ncl-role': '纽卡斯尔大学',
+    'ncl-org': '计算机科学学士（含行业实习）',
+    'ncl-date': '2022年 – 2026年',
+    'ncl-desc': '成绩：一等荣誉学位 — 84.3%。<br>课外活动：扑克社、火箭社、舞蹈社、大学合唱团、天文学会。<br>获得为期四年的奖学金。',
+
+    'proj-h2': '部分项目',
+    'proj-intro': '精选研究与个人项目，点击查看完整介绍。',
+    'proj1-tag': '毕业论文 · 机器学习',
+    'proj1-title': '太阳耀斑预测',
+    'proj2-tag': 'UKRI · 科学计算',
+    'proj3-tag': 'UKRI · 中子成像',
+    'proj4-tag': '个人项目',
+    'proj4-title': '个人项目',
+    'proj-note': '更多项目即将上线。',
+
+    'skills-h2': '技能',
+    'skills-g1': '编程语言与工具',
+    'skills-g2': '机器学习框架',
+    'skills-g3': '专业领域',
+    'skill-solar': '太阳物理学',
+    'skill-spaceweather': '空间天气',
+    'skill-sattest': '卫星测试',
+    'skill-plasma': '等离子体物理学',
+    'skill-cubesat': '立方星系统',
+    'skill-appliedml': '应用机器学习',
+
+    'awards-h2': '荣誉',
+    'awards-intro': '几场重要的演讲。',
+    'award1-title': '卓越表现奖与最佳海报奖',
+    'award1-org': '纽卡斯尔大学 · 2026年7月，全年级',
+    'award2-title': '研究研讨会：科学生涯与计算在其中的重要性——一位RAL Space实习生的视角',
+    'award2-org': '索尔福德大学 · 网络研讨会，2025年4月2日',
+    'award2-desc': '应邀分享科学生涯与计算在其中的作用，结合在RAL Space（STFC）担任科学软件工程实习生的经历。',
+    'award3-title': 'AIAA 最佳论文奖 — SmallSat 会议',
+    'award3-org': '由 NASA JPL 与 MIT 评审',
+    'award3-desc': '合著论文《亚10厘米碎片探测立方星任务的推进系统设计与灵敏度分析》，并完成相关仿真工作。',
+
+    'posters-heading': '海报',
+    'poster1-label': '本科毕业论文与ESA实习',
+    'poster2-label': '行业实习',
+    'poster3-label': 'SmallSat 会议',
+    'footer-tagline': '计算机科学学生 · 应用机器学习 · 航天与机器人',
+    'footer-nav-heading': '导航',
+    'footer-recognition': '展示',
+    'footer-contact-heading': '联系方式',
+    'footer-resume': '索取简历',
+    'footer-location': '中国北京',
+    'footer-copyright': '© 2026 Despina Ioannide. 保留所有权利。',
+    'footer-back-to-top': '返回顶部 ↑'
+  };
+
+  var currentLang = 'en';
+  var enCache = {};
+
+  function setLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(lang === 'zh'){
+        if(!(key in enCache)) enCache[key] = el.innerHTML;
+        if(zhDict[key] !== undefined) el.innerHTML = zhDict[key];
+      } else if(key in enCache){
+        el.innerHTML = enCache[key];
+      }
+    });
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    updateExpToggleLabel();
+    localStorage.setItem('site-lang', lang);
+    if(window.botReposition) window.botReposition();
+  }
+
+  function toggleLang(){
+    setLang(currentLang === 'zh' ? 'en' : 'zh');
+  }
+
+  var savedLang = localStorage.getItem('site-lang');
+  if(savedLang === 'zh') setLang('zh');
+
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('site-theme', theme);
+  }
+  function toggleTheme(){
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  var savedTheme = localStorage.getItem('site-theme') || 'dark';
+  setTheme(savedTheme);
+</script>
+
+<script>
+(function(){
+  var bot = document.getElementById('botMascot');
+  if(!bot) return;
+
+  var landings = Array.prototype.slice.call(document.querySelectorAll('.bot-landing'));
+  if(!landings.length) return;
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var coords = [];
+  var activeIndex = -1;
+  var idleTween = null;
+  var warping = false;
+
+  function measure(){
+    coords = landings.map(function(el){
+      var r = el.getBoundingClientRect();
+      return {
+        top: r.top + window.pageYOffset - 14,
+        left: r.right + window.pageXOffset - 10
+      };
+    });
+    if(coords.length) coords[0].left -= 30;
+  }
+
+  function stopIdle(){
+    if(idleTween){ idleTween.kill(); idleTween = null; }
+    gsap.set(bot, { y: 0 });
+  }
+
+  function startIdle(){
+    if(reduceMotion || idleTween) return;
+    idleTween = gsap.to(bot, {
+      y: '+=5',
+      duration: 1.4,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1
+    });
+  }
+
+  function squash(){
+    if(reduceMotion || warping) return;
+    gsap.killTweensOf(bot, 'scaleX,scaleY');
+    gsap.timeline()
+      .to(bot, { scaleX: 1.22, scaleY: 0.78, duration: 0.14, ease: 'power1.out' })
+      .to(bot, { scaleX: 1, scaleY: 1, duration: 0.5, ease: 'elastic.out(1, 0.5)' });
+  }
+
+  function portalTo(idx){
+    var target = coords[idx];
+    stopIdle();
+    gsap.killTweensOf(bot, 'scale,scaleX,scaleY,rotation,opacity');
+
+    if(reduceMotion){
+      gsap.set(bot, { top: target.top, left: target.left, opacity: 1, scale: 1, rotation: 0 });
+      return;
+    }
+
+    warping = true;
+    gsap.timeline({ onComplete: function(){ warping = false; startIdle(); } })
+      // pulled into the portal: shrink, spin, fade
+      .to(bot, { scale: 0, rotation: '+=280', opacity: 0, duration: 0.32, ease: 'power2.in' })
+      // teleport while invisible
+      .set(bot, { top: target.top, left: target.left })
+      // spat back out: grow, keep spinning the same way, fade in, with a little pop
+      .to(bot, { scale: 1, rotation: '+=280', opacity: 1, duration: 0.42, ease: 'back.out(1.8)' });
+  }
+
+  function place(){
+    if(!coords.length) return;
+    var trigger = window.pageYOffset + window.innerHeight * 0.35;
+    var idx = 0;
+    for(var i = 0; i < coords.length; i++){
+      if(coords[i].top <= trigger) idx = i;
+    }
+    if(idx !== activeIndex){
+      activeIndex = idx;
+      portalTo(idx);
+    }
+  }
+
+  var ticking = false;
+  function onScroll(){
+    if(!ticking){
+      window.requestAnimationFrame(function(){ place(); ticking = false; });
+      ticking = true;
+    }
+  }
+
+  function reposition(){ measure(); place(); }
+
+  bot.addEventListener('mouseenter', squash);
+
+  window.addEventListener('load', reposition);
+  window.addEventListener('resize', reposition);
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  window.botReposition = reposition;
+})();
+</script>
+
+</body>
+</html>

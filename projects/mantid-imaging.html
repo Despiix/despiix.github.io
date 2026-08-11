@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mantid Imaging · Despina Ioannide</title>
+<meta name="description" content="Industrial placement at UK Research and Innovation: improving the interface, correctness, and performance of Mantid Imaging, used to process neutron and muon radiography data.">
+<script>
+  (function(){
+    var t = localStorage.getItem('site-theme') || 'dark';
+    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --grad-top: #f8ded3;
+    --grad-mid: #f0ae93;
+    --grad-bottom: #dd7a58;
+
+    --bg: #fdf3ec;
+    --bg-panel: #f9e8dd;
+    --ink: #2b2019;
+    --ink-dim: #6f5b4c;
+    --ink-faint: #a4917f;
+    --hero-ink: #fffaf5;
+    --hero-ink-dim: rgba(255,250,245,0.86);
+
+    --accent: #d9714a;
+    --accent-deep: #b85535;
+    --line: rgba(43,32,25,0.13);
+    --line-strong: rgba(43,32,25,0.24);
+    --hero-glow: rgba(184,85,53,0.6);
+
+    --display: 'Space Grotesk', 'Jost', sans-serif;
+    --body-serif: 'Inter', 'Jost', sans-serif;
+    --label: 'Jost', 'Inter', sans-serif;
+    --max: 880px;
+
+    --nav-bg: rgba(253,243,236,0.72);
+  }
+
+  :root[data-theme="dark"]{
+    --grad-top: #260c31;
+    --grad-mid: #671372;
+    --grad-bottom: #7a3c22;
+
+    --bg: #16120e;
+    --bg-panel: #201a15;
+    --ink: #f1e6db;
+    --ink-dim: #c4b3a2;
+    --ink-faint: #8d7a68;
+    --line: rgba(241,230,219,0.12);
+    --line-strong: rgba(241,230,219,0.22);
+
+    --accent: #e8935f;
+    --accent-deep: #f0a877;
+
+    --nav-bg: rgba(22,18,14,0.72);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-serif);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 40px; position: relative; }
+
+  .label{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    height: 68px;
+    padding: 0 40px;
+  }
+  .back-link{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover{ color: var(--accent-deep); }
+  .nav-right{ display: flex; align-items: center; gap: 14px; }
+  .lang-toggle{
+    font-family: var(--label);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .lang-toggle:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+  .theme-toggle{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover{ border-color: var(--accent-deep); transform: rotate(12deg); }
+
+  /* ---------- HERO ---------- */
+  header.proj-hero{
+    position: relative;
+    overflow: hidden;
+    padding: 76px 0 60px;
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--grad-top) 62%, transparent) 0%, color-mix(in srgb, var(--grad-mid) 74%, transparent) 55%, color-mix(in srgb, var(--grad-bottom) 86%, transparent) 100%),
+      url('mantid_imaging.png');
+    background-size: cover;
+    background-position: center;
+    transition: background-color 0.3s ease;
+  }
+  header.proj-hero::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 130px;
+    background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  header.proj-hero .wrap{ position: relative; z-index: 1; }
+  .proj-eyebrow{
+    color: var(--hero-ink-dim);
+    margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--hero-glow), 0 1px 3px var(--hero-glow);
+  }
+  h1.proj-title{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--hero-ink);
+    margin-bottom: 20px;
+    text-shadow: 0 0 16px var(--hero-glow), 0 2px 6px var(--hero-glow);
+  }
+  .proj-sub{
+    font-size: clamp(1.02rem, 2vw, 1.18rem);
+    color: var(--hero-ink);
+    text-shadow: 0 0 12px var(--hero-glow), 0 1px 4px var(--hero-glow);
+    max-width: 620px;
+    margin-bottom: 34px;
+  }
+  .cta-row{ display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: 999px;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{ background: var(--hero-ink); color: #2b2019; }
+  .btn-primary:hover{ transform: translateY(-2px); }
+  .btn-ghost{ border: 1px solid rgba(255,250,245,0.55); color: var(--hero-ink); }
+  .btn-ghost:hover{ border-color: var(--hero-ink); transform: translateY(-2px); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--line); }
+  section:first-of-type{ border-top: none; }
+  h2{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 1.9rem);
+    margin-bottom: 22px;
+  }
+  .lede{ color: var(--ink-dim); font-size: 1.1rem; margin-bottom: 18px; }
+  p{ margin-bottom: 16px; }
+  p:last-child{ margin-bottom: 0; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- FIGURES ---------- */
+  .figure-card{
+    background: #fdfaf7;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    margin: 22px 0;
+    box-shadow: 0 6px 18px rgba(43,32,25,0.08);
+  }
+  .figure-card img{ width: 100%; height: auto; display: block; border-radius: 3px; }
+  .figure-card--sm img{ max-width: 420px; margin: 0 auto; }
+  .figure-caption{
+    font-family: var(--label);
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .figure-caption strong{ color: var(--ink-dim); }
+
+  /* ---------- FORMULA ---------- */
+  .formula{
+    background: var(--bg-panel);
+    border-radius: 8px;
+    padding: 18px 24px;
+    text-align: center;
+    font-family: 'Space Grotesk', monospace;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin: 20px 0;
+  }
+
+  /* ---------- ENGINEERING LIST ---------- */
+  .eng-list{ display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+  .eng-item{ padding-left: 18px; border-left: 2px solid var(--line-strong); }
+  .eng-item h3{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .eng-item p{ color: var(--ink-dim); margin: 0; font-size: 0.98rem; }
+  .eng-item code{
+    font-family: monospace;
+    background: var(--bg-panel);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: var(--accent-deep);
+  }
+
+  .note{
+    font-family: var(--label);
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    margin-top: 6px;
+  }
+
+  /* ---------- TOOL TAGS ---------- */
+  .tool-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; }
+  .tool-tag{ font-family: var(--label); font-size: 0.9rem; color: var(--ink-dim); }
+  .tool-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+
+  /* ---------- COLOPHON ---------- */
+  .colophon{
+    background: var(--bg-panel);
+    border-radius: 8px;
+    padding: 24px 26px;
+    font-size: 0.94rem;
+    color: var(--ink-dim);
+  }
+  .colophon div{ margin-bottom: 6px; }
+  .colophon div:last-child{ margin-bottom: 0; }
+  .colophon .k{
+    font-family: var(--label);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 8px;
+  }
+
+  footer{ padding: 40px 0 50px; border-top: 1px solid var(--line); background: var(--bg-panel); }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .footer-row p{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-faint); margin: 0; }
+  .footer-row a{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-dim); transition: color 0.2s ease; }
+  .footer-row a:hover{ color: var(--accent-deep); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="back-link" href="../index.html#projects" data-i18n="back-link">← Back to portfolio</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="wrap">
+    <div class="proj-eyebrow label" data-i18n="eyebrow">Industrial Placement · UK Research and Innovation, ISIS Neutron and Muon Source</div>
+    <h1 class="proj-title">Mantid Imaging</h1>
+    <p class="proj-sub" data-i18n="sub">Improving the interface, correctness, and performance of the tool researchers use to turn raw neutron and muon radiographs into science.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="mantid-ip-poster.pdf" target="_blank" rel="noopener" data-i18n="btn-poster">View my placement poster ↗</a>
+      <a class="btn btn-ghost" href="../index.html#projects" data-i18n="btn-all">All projects</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-what">What Mantid Imaging Is</h2>
+    <p data-i18n="what-p1">Mantid Imaging is the imaging-focused companion to Mantid: it turns raw neutron and muon radiographs into corrected, science-ready images and 3D reconstructions. Where a spectroscopy workspace might be a single curve, an imaging dataset is a full stack, potentially thousands of 2D projections captured as a sample rotates in the beam, all of which need the same corrections applied before they're usable.</p>
+    <p data-i18n="what-p2">I worked on it during the same ISIS placement as my <a href="mantid.html" style="text-decoration:underline;">Mantid</a> contribution, splitting time between interface improvements, image correction correctness, and performance.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-interface">Interface &amp; Workflow</h2>
+    <div class="eng-list">
+      <div class="eng-item">
+        <h3 data-i18n="eng1-h">Per-dataset operations</h3>
+        <p data-i18n="eng1-p">Introduced the ability to apply image processing operations to a specific dataset rather than everything currently loaded, so users aren't forced to reprocess data they don't need to touch.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng2-h">Consistent brightness feedback</h3>
+        <p data-i18n="eng2-p">Added automatic brightness-level resets after flat fielding, so the visual feedback stays consistent without users needing to manually readjust it every time.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng3-h">Cancellable loading</h3>
+        <p data-i18n="eng3-p">Implemented a mechanism to cancel the loading of large or incorrect datasets mid-process, instead of forcing users to wait out or restart the application.</p>
+      </div>
+    </div>
+
+    <div class="figure-card">
+      <img src="figures/mantid-imaging-brightness.png" alt="Mantid Imaging operations window showing image before, image after, and image difference panels with brightness histograms">
+      <div class="figure-caption" data-i18n="fig-brightness"><strong>Brightness levels in the operations window.</strong> Before/after/difference views with live histograms, used to sanity-check an operation's effect on an image before committing to it across a full dataset.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-flat">Flat Fielding</h2>
+    <p data-i18n="flat-p1">Flat fielding corrects for variation in detector sensitivity and illumination, the kind of uneven brightness that has nothing to do with the sample and everything to do with the detector. I explored and contributed to this functionality, which meant understanding the correction itself, not just the code around it:</p>
+
+    <div class="formula">corrected image = (raw − dark field) / (light field − dark field)</div>
+
+    <p data-i18n="flat-p2">Each pixel is normalised against a dark-field reference (detector response with no beam) and a flat-field reference (response with an unobstructed beam), which cancels out fixed-pattern artifacts and illumination gradients that would otherwise show up as false structure in the final image.</p>
+
+    <div class="figure-card">
+      <img src="figures/mantid-imaging-flatfield.png" alt="Raw, dark field, flat field, and corrected image comparison demonstrating the flat-fielding correction">
+      <div class="figure-caption" data-i18n="fig-flatfield"><strong>Before and after.</strong> The raw image carries a clear illumination gradient inherited from the detector; dividing it out using the dark- and flat-field references leaves a clean, evenly-lit corrected image.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-efficiency">Improving Efficiency</h2>
+    <p data-i18n="eff-p1">The part that isn't on the poster: a lot of Mantid Imaging's operations, flat fielding included, get applied identically across every frame in a stack that can run to thousands of images. Run naively, that's the same expensive correction repeated one frame at a time. I worked on making that faster along two lines: parallelising batch operations, like flat fielding and filtering, across CPU cores so a stack processes many frames at once instead of sequentially, and reducing redundant computation by reusing shared per-stack values, like the flat and dark field references, instead of recalculating them for every single frame they're applied to.</p>
+    <p class="note" data-i18n="eff-note">Noting for accuracy: this section describes the general shape of the optimisation work rather than exact benchmarks, I'd want to pull the real before/after numbers from the codebase before quoting specifics in an interview.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-tools">Tools &amp; Methods</h2>
+    <div class="tool-tags">
+      <span class="tool-tag">Python</span>
+      <span class="tool-tag" data-i18n="tool-mp">Multiprocessing</span>
+      <span class="tool-tag">NumPy</span>
+      <span class="tool-tag" data-i18n="tool-ip">Image Processing</span>
+      <span class="tool-tag">PyQt</span>
+      <span class="tool-tag">Git</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-colophon">Colophon</h2>
+    <div class="colophon">
+      <div><span class="k" data-i18n="k-role">Role</span><span data-i18n="v-role">Scientific Software Engineer, Industrial Placement</span></div>
+      <div><span class="k" data-i18n="k-org">Organisation</span><span data-i18n="v-org">UK Research and Innovation (UKRI) · Science and Technology Facilities Council</span></div>
+      <div><span class="k" data-i18n="k-facility">Facility</span><span data-i18n="v-facility">ISIS Neutron and Muon Source, Harwell Campus, Oxfordshire</span></div>
+      <div><span class="k" data-i18n="k-dates">Dates</span><span data-i18n="v-dates">Jul 2024 – Jun 2025</span></div>
+      <div><span class="k" data-i18n="k-related">Related</span><a href="mantid.html" style="text-decoration:underline;">Mantid</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© 2026 Despina Ioannide</p>
+    <a href="../index.html#projects" data-i18n="footer-back">← Back to all projects</a>
+  </div>
+</footer>
+
+<script>
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('site-theme', theme);
+  }
+  function toggleTheme(){
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  setTheme(localStorage.getItem('site-theme') || 'dark');
+</script>
+
+<script>
+  var zhDict = {
+    'back-link': '← 返回主页',
+    'eyebrow': '行业实习 · 英国研究与创新署（UKRI），ISIS 中子与介子源',
+    'sub': '改进科研人员用于将原始中子与介子射线照相数据转化为科学成果的工具，提升其界面、正确性与性能。',
+    'btn-poster': '查看我的实习海报 ↗',
+    'btn-all': '所有项目',
+
+    'h2-what': 'Mantid Imaging 是什么',
+    'what-p1': 'Mantid Imaging 是 Mantid 面向成像领域的配套工具：它将原始的中子与介子射线照片转化为经过校正、可用于科学分析的图像和三维重建结果。如果说光谱工作区可能只是一条曲线，那么成像数据集就是一整个数据栈，样品在射线中旋转时可能会采集数千张二维投影图像，而这些图像在可用之前都需要经过相同的校正处理。',
+    'what-p2': '我在 ISIS 实习期间与 <a href="mantid.html" style="text-decoration:underline;">Mantid</a> 项目的工作同步进行，将时间分配在界面改进、图像校正的正确性以及性能优化三个方面。',
+
+    'h2-interface': '界面与工作流程',
+    'eng1-h': '按数据集执行操作',
+    'eng1-p': '新增了仅对特定数据集应用图像处理操作的功能，而不是对当前加载的所有数据统一处理，用户因此无需重新处理不需要改动的数据。',
+    'eng2-h': '稳定一致的亮度反馈',
+    'eng2-p': '新增了在完成平场校正后自动重置亮度级别的功能，使视觉反馈始终保持一致，用户无需每次手动重新调整。',
+    'eng3-h': '可中断的数据加载',
+    'eng3-p': '实现了在加载过程中取消大型或错误数据集加载的机制，用户无需被迫等待加载完成或重启应用程序。',
+    'fig-brightness': '<strong>操作窗口中的亮度级别显示。</strong>前 / 后 / 差异三视图配合实时直方图，可在将某项操作应用到整个数据集之前，先检查其对单张图像的实际效果。',
+
+    'h2-flat': '平场校正',
+    'flat-p1': '平场校正用于修正探测器灵敏度和照明的差异，这类亮度不均并非样品本身造成，而完全源自探测器本身。我深入研究并为这一功能做出了贡献，这意味着我需要理解校正方法本身，而不只是围绕它的代码：',
+    'flat-p2': '每个像素都会根据暗场参考图像（无射线时探测器的响应）和平场参考图像（射线无遮挡时的响应）进行归一化处理，从而消除固定图案伪影和照明梯度，避免它们在最终图像中呈现为虚假结构。',
+    'fig-flatfield': '<strong>校正前后对比。</strong>原始图像带有明显的、源自探测器的照明梯度；通过暗场与平场参考图像进行归一化处理后，得到的校正图像亮度均匀、干净清晰。',
+
+    'h2-efficiency': '效率优化',
+    'eff-p1': '这部分内容没有出现在海报上：Mantid Imaging 的许多操作，包括平场校正在内，都需要对一个数据栈中数以千计的每一帧图像执行完全相同的处理。如果按最朴素的方式实现，就意味着同一个高开销的校正操作要在每一帧上重复执行。我从两个方向着手提升了效率：一是将平场校正、滤波等批量操作在多个 CPU 核心上并行化，使一个数据栈可以同时处理多帧，而不是逐帧顺序处理；二是通过复用整个数据栈共享的参考值（例如平场和暗场参考图像），避免在每一帧上重复计算这些本可以只计算一次的值，从而减少冗余计算。',
+    'eff-note': '说明：本节描述的是优化工作的大致方向，而非精确的基准测试数据；若在面试中需要引用具体数字，我会先从代码库中核实真实的前后对比数据。',
+
+    'h2-tools': '工具与方法',
+    'tool-mp': 'Multiprocessing（多进程）',
+    'tool-ip': 'Image Processing（图像处理）',
+
+    'h2-colophon': '文档信息',
+    'k-role': '职位',
+    'k-org': '所属机构',
+    'k-facility': '科研设施',
+    'k-dates': '时间',
+    'k-related': '相关项目',
+    'v-role': '科学软件工程师（行业实习）',
+    'v-org': '英国研究与创新署（UKRI）· 科学技术设施委员会（STFC）',
+    'v-facility': 'ISIS 中子与介子源，英国牛津郡哈韦尔园区',
+    'v-dates': '2024年7月 – 2025年6月',
+
+    'footer-back': '← 返回所有项目'
+  };
+
+  var currentLang = 'en';
+  var enCache = {};
+
+  function setLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(lang === 'zh'){
+        if(!(key in enCache)) enCache[key] = el.innerHTML;
+        if(zhDict[key] !== undefined) el.innerHTML = zhDict[key];
+      } else if(key in enCache){
+        el.innerHTML = enCache[key];
+      }
+    });
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    localStorage.setItem('site-lang', lang);
+  }
+
+  function toggleLang(){
+    setLang(currentLang === 'zh' ? 'en' : 'zh');
+  }
+
+  var savedLang = localStorage.getItem('site-lang');
+  if(savedLang === 'zh') setLang('zh');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mantid · Despina Ioannide</title>
+<meta name="description" content="Industrial placement at UK Research and Innovation: contributing C++ and Python to Mantid, the open-source framework used to process neutron and muon scattering data at facilities worldwide.">
+<script>
+  (function(){
+    var t = localStorage.getItem('site-theme') || 'dark';
+    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --grad-top: #f8ded3;
+    --grad-mid: #f0ae93;
+    --grad-bottom: #dd7a58;
+
+    --bg: #fdf3ec;
+    --bg-panel: #f9e8dd;
+    --ink: #2b2019;
+    --ink-dim: #6f5b4c;
+    --ink-faint: #a4917f;
+    --hero-ink: #fffaf5;
+    --hero-ink-dim: rgba(255,250,245,0.86);
+
+    --accent: #d9714a;
+    --accent-deep: #b85535;
+    --line: rgba(43,32,25,0.13);
+    --line-strong: rgba(43,32,25,0.24);
+    --hero-glow: rgba(184,85,53,0.6);
+
+    --display: 'Space Grotesk', 'Jost', sans-serif;
+    --body-serif: 'Inter', 'Jost', sans-serif;
+    --label: 'Jost', 'Inter', sans-serif;
+    --max: 880px;
+
+    --nav-bg: rgba(253,243,236,0.72);
+  }
+
+  :root[data-theme="dark"]{
+    --grad-top: #260c31;
+    --grad-mid: #671372;
+    --grad-bottom: #7a3c22;
+
+    --bg: #16120e;
+    --bg-panel: #201a15;
+    --ink: #f1e6db;
+    --ink-dim: #c4b3a2;
+    --ink-faint: #8d7a68;
+    --line: rgba(241,230,219,0.12);
+    --line-strong: rgba(241,230,219,0.22);
+
+    --accent: #e8935f;
+    --accent-deep: #f0a877;
+
+    --nav-bg: rgba(22,18,14,0.72);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-serif);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 40px; position: relative; }
+
+  .label{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    height: 68px;
+    padding: 0 40px;
+  }
+  .back-link{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover{ color: var(--accent-deep); }
+  .nav-right{ display: flex; align-items: center; gap: 14px; }
+  .lang-toggle{
+    font-family: var(--label);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .lang-toggle:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+  .theme-toggle{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover{ border-color: var(--accent-deep); transform: rotate(12deg); }
+
+  /* ---------- HERO ---------- */
+  header.proj-hero{
+    position: relative;
+    overflow: hidden;
+    padding: 76px 0 60px;
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--grad-top) 62%, transparent) 0%, color-mix(in srgb, var(--grad-mid) 74%, transparent) 55%, color-mix(in srgb, var(--grad-bottom) 86%, transparent) 100%),
+      url('mantid.png');
+    background-size: cover;
+    background-position: center 30%;
+    transition: background-color 0.3s ease;
+  }
+  header.proj-hero::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 130px;
+    background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  header.proj-hero .wrap{ position: relative; z-index: 1; }
+  .proj-eyebrow{
+    color: var(--hero-ink-dim);
+    margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--hero-glow), 0 1px 3px var(--hero-glow);
+  }
+  h1.proj-title{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--hero-ink);
+    margin-bottom: 20px;
+    text-shadow: 0 0 16px var(--hero-glow), 0 2px 6px var(--hero-glow);
+  }
+  .proj-sub{
+    font-size: clamp(1.02rem, 2vw, 1.18rem);
+    color: var(--hero-ink);
+    text-shadow: 0 0 12px var(--hero-glow), 0 1px 4px var(--hero-glow);
+    max-width: 620px;
+    margin-bottom: 34px;
+  }
+  .cta-row{ display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: 999px;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{ background: var(--hero-ink); color: #2b2019; }
+  .btn-primary:hover{ transform: translateY(-2px); }
+  .btn-ghost{ border: 1px solid rgba(255,250,245,0.55); color: var(--hero-ink); }
+  .btn-ghost:hover{ border-color: var(--hero-ink); transform: translateY(-2px); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--line); }
+  section:first-of-type{ border-top: none; }
+  h2{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 1.9rem);
+    margin-bottom: 22px;
+  }
+  .lede{ color: var(--ink-dim); font-size: 1.1rem; margin-bottom: 18px; }
+  p{ margin-bottom: 16px; }
+  p:last-child{ margin-bottom: 0; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- STATS ---------- */
+  .stat-grid{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  @media (max-width: 640px){ .stat-grid{ grid-template-columns: repeat(2, 1fr); } }
+  .stat-tile{
+    background: var(--bg-panel);
+    padding: 26px 16px;
+    text-align: center;
+  }
+  .stat-num{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.3rem, 4vw, 1.7rem);
+    color: var(--accent-deep);
+    margin-bottom: 6px;
+  }
+  .stat-label{
+    font-family: var(--label);
+    font-size: 0.64rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    line-height: 1.4;
+  }
+
+  /* ---------- FIGURES ---------- */
+  .figure-card{
+    background: #fdfaf7;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    margin: 22px 0;
+    box-shadow: 0 6px 18px rgba(43,32,25,0.08);
+  }
+  .figure-card img{ width: 100%; height: auto; display: block; border-radius: 3px; }
+  .figure-card--sm img{ max-width: 420px; margin: 0 auto; }
+  .figure-caption{
+    font-family: var(--label);
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .figure-caption strong{ color: var(--ink-dim); }
+
+  /* ---------- ENGINEERING LIST ---------- */
+  .eng-list{ display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+  .eng-item{ padding-left: 18px; border-left: 2px solid var(--line-strong); }
+  .eng-item h3{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .eng-item p{ color: var(--ink-dim); margin: 0; font-size: 0.98rem; }
+  .eng-item code{
+    font-family: monospace;
+    background: var(--bg-panel);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: var(--accent-deep);
+  }
+
+  /* ---------- TOOL TAGS ---------- */
+  .tool-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; }
+  .tool-tag{ font-family: var(--label); font-size: 0.9rem; color: var(--ink-dim); }
+  .tool-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+
+  /* ---------- COLOPHON ---------- */
+  .colophon{
+    background: var(--bg-panel);
+    border-radius: 8px;
+    padding: 24px 26px;
+    font-size: 0.94rem;
+    color: var(--ink-dim);
+  }
+  .colophon div{ margin-bottom: 6px; }
+  .colophon div:last-child{ margin-bottom: 0; }
+  .colophon .k{
+    font-family: var(--label);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 8px;
+  }
+
+  footer{ padding: 40px 0 50px; border-top: 1px solid var(--line); background: var(--bg-panel); }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .footer-row p{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-faint); margin: 0; }
+  .footer-row a{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-dim); transition: color 0.2s ease; }
+  .footer-row a:hover{ color: var(--accent-deep); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="back-link" href="../index.html#projects" data-i18n="back-link">← Back to portfolio</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="wrap">
+    <div class="proj-eyebrow label" data-i18n="eyebrow">Industrial Placement · UK Research and Innovation, ISIS Neutron and Muon Source</div>
+    <h1 class="proj-title">Mantid</h1>
+    <p class="proj-sub" data-i18n="sub">Contributing C++ and Python to the open-source framework that processes neutron and muon scattering data at facilities across the world.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="mantid-ip-poster.pdf" target="_blank" rel="noopener" data-i18n="btn-poster">View my placement poster ↗</a>
+      <a class="btn btn-ghost" href="https://www.mantidproject.org" target="_blank" rel="noopener" data-i18n="btn-official">Official Mantid project ↗</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-what">What Mantid Is</h2>
+    <p data-i18n="what-p1">Mantid is the open-source framework that most of the world's major neutron and muon scattering facilities use to reduce, process, and visualise their experimental data. Under the hood it's a Python library backed by a high-performance C++ core, paired with MantidWorkbench, a full graphical environment for scripting, plotting, and instrument visualisation.</p>
+    <p data-i18n="what-p2">I worked on it as part of my placement at the <strong>ISIS Neutron and Muon Source</strong> (Harwell Campus, Oxfordshire), one of the world's leading pulsed neutron and muon facilities and the UK's home for Mantid development. ISIS is one of several facilities worldwide that build and rely on it.</p>
+
+    <div class="figure-card">
+      <img src="figures/collaborators.png" alt="Logos of institutions that collaborate on Mantid: UKRI/STFC, Oak Ridge National Laboratory, European Spallation Source, CERN, SNS, ANSTO">
+      <div class="figure-caption" data-i18n="fig-collab"><strong>Built for a global user base.</strong> Mantid is developed and used across facilities including UKRI/STFC (ISIS, UK), Oak Ridge National Laboratory and the Spallation Neutron Source (US), the European Spallation Source (Sweden), CERN, and ANSTO (Australia).</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="stat-num">C++/Py</div>
+        <div class="stat-label" data-i18n="stat1">Core language + scripting layer</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">6+</div>
+        <div class="stat-label" data-i18n="stat2">Partner facilities worldwide</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">3</div>
+        <div class="stat-label" data-i18n="stat3">Platforms: Linux, Windows, macOS</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">100%</div>
+        <div class="stat-label" data-i18n="stat4">Open source</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-contrib">One Contribution: CreateMonteCarloWorkspace</h2>
+    <p data-i18n="contrib-p1">Scientists and developers at ISIS write custom fitting functions to model their experimental data, but testing a fitting function properly means throwing realistic, noisy data at it, not just a clean textbook curve. I was asked to build a tool for exactly that: <strong>CreateMonteCarloWorkspace</strong>, a C++ algorithm that generates a statistically realistic synthetic workspace from any real input spectrum.</p>
+    <p data-i18n="contrib-p2">The approach is Monte Carlo sampling. The algorithm treats the input spectrum as a probability density function, integrates it into a normalised cumulative distribution function, then repeatedly draws a uniform random number between 0 and 1 and maps it back through that CDF to pick a bin. Do that enough times and the output reproduces the shape of the original data, complete with the kind of statistical noise you'd actually see on an instrument, while guaranteeing correct event proportions across every bin and full reproducibility from a fixed random seed.</p>
+
+    <div class="figure-card">
+      <img src="figures/mantid-montecarlo.png" alt="C++ implementation of the normalized CDF computation in CreateMonteCarloWorkspace, alongside a plot comparing input data to the algorithm's simulated output">
+      <div class="figure-caption" data-i18n="fig-mc"><strong>From spectrum to CDF to simulated noise.</strong> The core normalisation step (left) and the algorithm's output (orange) tracking the shape of the real input data (blue) while adding realistic statistical noise.</div>
+    </div>
+
+    <div class="eng-list">
+      <div class="eng-item">
+        <h3 data-i18n="eng1-h">Binary search, not a linear scan</h3>
+        <p data-i18n="eng1-p">Each random draw maps back through the CDF with <code>std::lower_bound</code>, a binary search, rather than walking the array from the start. That's the difference between O(log n) and O(n) per sample, which matters once you're generating events by the million.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng2-h">Real error propagation, not just fake data</h3>
+        <p data-i18n="eng2-p">Output uncertainties are computed as √N per bin, the correct standard deviation for counting statistics, so the simulated workspace behaves like real instrument data in a downstream fit instead of just looking right on screen.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng3-h">Sensible defaults</h3>
+        <p data-i18n="eng3-p">If the caller doesn't specify how many Monte Carlo events to generate, the algorithm derives a sensible number automatically from the integral of the input spectrum, so it works out of the box without anyone needing to guess a magnitude.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-few-more">A Few More Contributions</h2>
+    <p class="lede" data-i18n="few-more-lede">A small selection from the rest of my placement, maintaining and improving a production scientific codebase used daily by researchers, not the full list.</p>
+
+    <div class="eng-list">
+      <div class="eng-item">
+        <h3 data-i18n="eng4-h">Multi-workspace plotting</h3>
+        <p data-i18n="eng4-p">Added support for surface, contour, and waterfall plots built from multiple single-spectrum workspaces at once, instead of requiring users to plot them one at a time.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng5-h">Matplotlib 3.7 → 3.9 migration</h3>
+        <p data-i18n="eng5-p">Updated the entire plotting codebase across the version bump, and harmonised the <code>workbench</code> and <code>mantidworkbench</code> entry points so both launch consistently.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng6-h">UI bug fixes</h3>
+        <p data-i18n="eng6-p">Fixed a bug where dragging a plot legend outside the window would lose it permanently, improved keyboard tabbing order across multiple windows, and tracked down a malformed XML script that was crashing the editor outright.</p>
+      </div>
+    </div>
+
+    <div class="figure-card">
+      <img src="figures/mantid-multispectrum.png" alt="Surface and wireframe plots generated from multiple single-spectrum Mantid workspaces">
+      <div class="figure-caption" data-i18n="fig-multi"><strong>One plot, several workspaces.</strong> Surface and wireframe views built from three separate single-spectrum workspaces (ws0, ws1, ws2) plotted together.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-tools">Tools &amp; Methods</h2>
+    <div class="tool-tags">
+      <span class="tool-tag">C++</span>
+      <span class="tool-tag">Python</span>
+      <span class="tool-tag">Matplotlib</span>
+      <span class="tool-tag">Qt</span>
+      <span class="tool-tag" data-i18n="tool-mc">Monte Carlo Methods</span>
+      <span class="tool-tag">Git</span>
+      <span class="tool-tag">XML</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-colophon">Colophon</h2>
+    <div class="colophon">
+      <div><span class="k" data-i18n="k-role">Role</span><span data-i18n="v-role">Scientific Software Engineer, Industrial Placement</span></div>
+      <div><span class="k" data-i18n="k-org">Organisation</span><span data-i18n="v-org">UK Research and Innovation (UKRI) · Science and Technology Facilities Council</span></div>
+      <div><span class="k" data-i18n="k-facility">Facility</span><span data-i18n="v-facility">ISIS Neutron and Muon Source, Harwell Campus, Oxfordshire</span></div>
+      <div><span class="k" data-i18n="k-dates">Dates</span><span data-i18n="v-dates">Jul 2024 – Jun 2025</span></div>
+      <div><span class="k" data-i18n="k-learn">Learn more</span><a href="https://www.mantidproject.org" target="_blank" rel="noopener" style="text-decoration:underline;">mantidproject.org</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© 2026 Despina Ioannide</p>
+    <a href="../index.html#projects" data-i18n="footer-back">← Back to all projects</a>
+  </div>
+</footer>
+
+<script>
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('site-theme', theme);
+  }
+  function toggleTheme(){
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  setTheme(localStorage.getItem('site-theme') || 'dark');
+</script>
+
+<script>
+  var zhDict = {
+    'back-link': '← 返回主页',
+    'eyebrow': '行业实习 · 英国研究与创新署（UKRI），ISIS 中子与介子源',
+    'sub': '为全球各大科研机构处理中子与介子散射数据所使用的开源框架贡献 C++ 与 Python 代码。',
+    'btn-poster': '查看我的实习海报 ↗',
+    'btn-official': 'Mantid 官方项目 ↗',
+
+    'h2-what': 'Mantid 是什么',
+    'what-p1': 'Mantid 是全球大多数主要中子与介子散射设施用于归约、处理和可视化实验数据的开源框架。其底层是一个由高性能 C++ 核心驱动的 Python 库，并配有 MantidWorkbench，一个集脚本编写、绘图与仪器可视化于一体的完整图形环境。',
+    'what-p2': '我在 <strong>ISIS 中子与介子源</strong>（英国牛津郡哈韦尔园区）实习期间参与了这一项目的开发。ISIS 是世界领先的脉冲中子与介子科研设施之一，也是英国 Mantid 开发的核心基地，同时也是全球众多依赖并共同开发 Mantid 的机构之一。',
+    'fig-collab': '<strong>为全球用户而生。</strong>Mantid 由多家机构共同开发和使用，包括英国研究与创新署下属科学技术设施委员会（UKRI/STFC，ISIS）、美国橡树岭国家实验室及散裂中子源（SNS）、瑞典欧洲散裂源（ESS）、欧洲核子研究组织（CERN），以及澳大利亚核科学技术组织（ANSTO）。',
+
+    'stat1': '核心语言与脚本层',
+    'stat2': '全球合作机构',
+    'stat3': '支持平台：Linux、Windows、macOS',
+    'stat4': '开源',
+
+    'h2-contrib': '其中一项贡献：CreateMonteCarloWorkspace',
+    'contrib-p1': 'ISIS 的科学家和开发者会编写自定义拟合函数来建模实验数据，但要真正测试一个拟合函数，需要用贴近真实情况、带有噪声的数据去检验它，而不只是一条干净的教科书曲线。我的任务正是构建这样一个工具：<strong>CreateMonteCarloWorkspace</strong>，一个能够根据任意真实输入光谱生成统计上逼真的模拟工作区的 C++ 算法。',
+    'contrib-p2': '其核心方法是蒙特卡洛采样。算法将输入光谱视为一个概率密度函数，将其积分为归一化的累积分布函数（CDF），然后反复在0到1之间抽取均匀随机数，并通过该 CDF 映射回对应的区间。重复足够多次后，输出结果便能重现原始数据的形状，并带有仪器实际观测中会出现的统计噪声，同时保证每个区间的事件比例正确，并且在固定随机种子下完全可复现。',
+    'fig-mc': '<strong>从光谱到 CDF，再到模拟噪声。</strong>左侧为核心归一化步骤，右侧为算法输出（橙色）在贴合真实输入数据（蓝色）形状的同时加入了真实的统计噪声。',
+
+    'eng1-h': '使用二分查找，而非线性扫描',
+    'eng1-p': '每次随机抽样都通过 <code>std::lower_bound</code>（二分查找）映射回 CDF，而不是从数组开头逐一扫描。这是每次采样 O(log n) 与 O(n) 复杂度之间的差别，当生成数百万个事件时，这一差异非常重要。',
+    'eng2-h': '真实的误差传播，而不只是伪造数据',
+    'eng2-p': '每个区间的输出不确定度按 √N 计算，这是计数统计中正确的标准差公式，因此模拟出的工作区在后续拟合中的表现如同真实仪器数据，而不仅仅是在屏幕上"看起来正确"。',
+    'eng3-h': '合理的默认设置',
+    'eng3-p': '如果调用者未指定要生成的蒙特卡洛事件数量，算法会根据输入光谱的积分自动推导出一个合理的数值，因此无需任何人猜测数量级，开箱即可使用。',
+
+    'h2-few-more': '其他一些贡献',
+    'few-more-lede': '以下是我实习期间其余工作的一小部分节选，主要围绕维护和改进一个被科研人员每日使用的生产级科学代码库，并非完整列表。',
+
+    'eng4-h': '多工作区绘图',
+    'eng4-p': '新增了对由多个单光谱工作区同时构建曲面图、等高线图和瀑布图的支持，用户无需再逐一绘制。',
+    'eng5-h': 'Matplotlib 3.7 → 3.9 版本迁移',
+    'eng5-p': '在版本升级过程中更新了整个绘图相关代码库，并统一了 <code>workbench</code> 与 <code>mantidworkbench</code> 两个入口，使两者的启动行为保持一致。',
+    'eng6-h': '界面缺陷修复',
+    'eng6-p': '修复了将图例拖出窗口后会永久丢失的缺陷，改进了多窗口间的键盘 Tab 切换顺序，并定位并修复了一个导致编辑器直接崩溃的格式错误 XML 脚本。',
+    'fig-multi': '<strong>一张图，多个工作区。</strong>由三个独立的单光谱工作区（ws0、ws1、ws2）共同绘制而成的曲面图与线框图。',
+
+    'h2-tools': '工具与方法',
+    'tool-mc': 'Monte Carlo Methods（蒙特卡洛方法）',
+
+    'h2-colophon': '文档信息',
+    'k-role': '职位',
+    'k-org': '所属机构',
+    'k-facility': '科研设施',
+    'k-dates': '时间',
+    'k-learn': '了解更多',
+    'v-role': '科学软件工程师（行业实习）',
+    'v-org': '英国研究与创新署（UKRI）· 科学技术设施委员会（STFC）',
+    'v-facility': 'ISIS 中子与介子源，英国牛津郡哈韦尔园区',
+    'v-dates': '2024年7月 – 2025年6月',
+
+    'footer-back': '← 返回所有项目'
+  };
+
+  var currentLang = 'en';
+  var enCache = {};
+
+  function setLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(lang === 'zh'){
+        if(!(key in enCache)) enCache[key] = el.innerHTML;
+        if(zhDict[key] !== undefined) el.innerHTML = zhDict[key];
+      } else if(key in enCache){
+        el.innerHTML = enCache[key];
+      }
+    });
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    localStorage.setItem('site-lang', lang);
+  }
+
+  function toggleLang(){
+    setLang(currentLang === 'zh' ? 'en' : 'zh');
+  }
+
+  var savedLang = localStorage.getItem('site-lang');
+  if(savedLang === 'zh') setLang('zh');
+</script>
+
+</body>
+</html>

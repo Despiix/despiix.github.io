@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solar Flare Prediction · Despina Ioannide</title>
+<meta name="description" content="BSc dissertation with the European Space Agency: six machine learning architectures applied to 25 million ultraviolet solar spectra to find early warning signs of solar flares.">
+<script>
+  (function(){
+    var t = localStorage.getItem('site-theme') || 'dark';
+    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --grad-top: #f8ded3;
+    --grad-mid: #f0ae93;
+    --grad-bottom: #dd7a58;
+
+    --bg: #fdf3ec;
+    --bg-panel: #f9e8dd;
+    --ink: #2b2019;
+    --ink-dim: #6f5b4c;
+    --ink-faint: #a4917f;
+    --hero-ink: #fffaf5;
+    --hero-ink-dim: rgba(255,250,245,0.86);
+
+    --accent: #d9714a;
+    --accent-deep: #b85535;
+    --line: rgba(43,32,25,0.13);
+    --line-strong: rgba(43,32,25,0.24);
+    --hero-glow: rgba(184,85,53,0.6);
+
+    --display: 'Space Grotesk', 'Jost', sans-serif;
+    --body-serif: 'Inter', 'Jost', sans-serif;
+    --label: 'Jost', 'Inter', sans-serif;
+    --max: 880px;
+
+    --nav-bg: rgba(253,243,236,0.72);
+  }
+
+  :root[data-theme="dark"]{
+    --grad-top: #260c31;
+    --grad-mid: #671372;
+    --grad-bottom: #7a3c22;
+
+    --bg: #16120e;
+    --bg-panel: #201a15;
+    --ink: #f1e6db;
+    --ink-dim: #c4b3a2;
+    --ink-faint: #8d7a68;
+    --line: rgba(241,230,219,0.12);
+    --line-strong: rgba(241,230,219,0.22);
+
+    --accent: #e8935f;
+    --accent-deep: #f0a877;
+
+    --nav-bg: rgba(22,18,14,0.72);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-serif);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 40px; position: relative; }
+
+  .label{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    height: 68px;
+    padding: 0 40px;
+  }
+  .back-link{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover{ color: var(--accent-deep); }
+  .nav-right{ display: flex; align-items: center; gap: 14px; }
+  .lang-toggle{
+    font-family: var(--label);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .lang-toggle:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+  .theme-toggle{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover{ border-color: var(--accent-deep); transform: rotate(12deg); }
+
+  /* ---------- HERO ---------- */
+  header.proj-hero{
+    position: relative;
+    overflow: hidden;
+    padding: 76px 0 60px;
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--grad-top) 55%, transparent) 0%, color-mix(in srgb, var(--grad-mid) 68%, transparent) 55%, color-mix(in srgb, var(--grad-bottom) 82%, transparent) 100%),
+      url('solar_flare.jpg');
+    background-size: cover;
+    background-position: center;
+    transition: background-color 0.3s ease;
+  }
+  header.proj-hero::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 130px;
+    background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  header.proj-hero .wrap{ position: relative; z-index: 1; }
+  .proj-eyebrow{
+    color: var(--hero-ink-dim);
+    margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--hero-glow), 0 1px 3px var(--hero-glow);
+  }
+  h1.proj-title{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--hero-ink);
+    margin-bottom: 20px;
+    text-shadow: 0 0 16px var(--hero-glow), 0 2px 6px var(--hero-glow);
+  }
+  .proj-sub{
+    font-size: clamp(1.02rem, 2vw, 1.18rem);
+    color: var(--hero-ink);
+    text-shadow: 0 0 12px var(--hero-glow), 0 1px 4px var(--hero-glow);
+    max-width: 620px;
+    margin-bottom: 34px;
+  }
+  .cta-row{ display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: 999px;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{ background: var(--hero-ink); color: #2b2019; }
+  .btn-primary:hover{ transform: translateY(-2px); }
+  .btn-ghost{ border: 1px solid rgba(255,250,245,0.55); color: var(--hero-ink); }
+  .btn-ghost:hover{ border-color: var(--hero-ink); transform: translateY(-2px); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--line); }
+  section:first-of-type{ border-top: none; }
+  h2{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 1.9rem);
+    margin-bottom: 22px;
+  }
+  .lede{ color: var(--ink-dim); font-size: 1.1rem; margin-bottom: 18px; }
+  p{ margin-bottom: 16px; }
+  p:last-child{ margin-bottom: 0; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- STATS ---------- */
+  .stat-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  @media (max-width: 640px){ .stat-grid{ grid-template-columns: repeat(2, 1fr); } }
+  .stat-tile{
+    background: var(--bg-panel);
+    padding: 26px 18px;
+    text-align: center;
+  }
+  .stat-num{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    color: var(--accent-deep);
+    margin-bottom: 6px;
+  }
+  .stat-label{
+    font-family: var(--label);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    line-height: 1.4;
+  }
+
+  /* ---------- RESEARCH QUESTIONS ---------- */
+  .rq-list{ display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+  .rq-item{
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  .rq-tag{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--accent-deep);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 4px 0;
+    text-align: center;
+    height: fit-content;
+  }
+  .rq-item p{ color: var(--ink-dim); margin: 0; }
+
+  /* ---------- FINDING CALLOUT ---------- */
+  .callout{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent-deep);
+    border-radius: 6px;
+    padding: 22px 24px;
+    margin: 22px 0;
+    color: var(--ink-dim);
+    font-size: 1rem;
+  }
+  .callout strong{ color: var(--ink); }
+
+  /* ---------- FIGURES ---------- */
+  .figure-card{
+    background: #fdfaf7;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    margin: 22px 0;
+    box-shadow: 0 6px 18px rgba(43,32,25,0.08);
+  }
+  .figure-card img{ width: 100%; height: auto; display: block; border-radius: 3px; }
+  .figure-card--sm img{ max-width: 380px; margin: 0 auto; }
+  .figure-caption{
+    font-family: var(--label);
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .figure-caption strong{ color: var(--ink-dim); }
+  .figure-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 700px){ .figure-grid{ grid-template-columns: 1fr; } }
+
+  /* ---------- ENGINEERING LIST ---------- */
+  .eng-list{ display: flex; flex-direction: column; gap: 20px; margin-top: 8px; }
+  .eng-item{ padding-left: 18px; border-left: 2px solid var(--line-strong); }
+  .eng-item h3{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .eng-item p{ color: var(--ink-dim); margin: 0; font-size: 0.98rem; }
+  .eng-item code{
+    font-family: monospace;
+    background: var(--bg-panel);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: var(--accent-deep);
+  }
+
+  /* ---------- TOOL TAGS ---------- */
+  .tool-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; }
+  .tool-tag{ font-family: var(--label); font-size: 0.9rem; color: var(--ink-dim); }
+  .tool-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+
+  /* ---------- COLOPHON ---------- */
+  .colophon{
+    background: var(--bg-panel);
+    border-radius: 8px;
+    padding: 24px 26px;
+    font-size: 0.94rem;
+    color: var(--ink-dim);
+  }
+  .colophon div{ margin-bottom: 6px; }
+  .colophon div:last-child{ margin-bottom: 0; }
+  .colophon .k{
+    font-family: var(--label);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 8px;
+  }
+
+  footer{ padding: 40px 0 50px; border-top: 1px solid var(--line); background: var(--bg-panel); }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .footer-row p{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-faint); margin: 0; }
+  .footer-row a{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-dim); transition: color 0.2s ease; }
+  .footer-row a:hover{ color: var(--accent-deep); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="back-link" href="../index.html#projects" data-i18n="back-link">← Back to portfolio</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="wrap">
+    <div class="proj-eyebrow label" data-i18n="eyebrow">BSc Dissertation · Newcastle University × European Space Agency</div>
+    <h1 class="proj-title" data-i18n="title">Solar Flare Prediction</h1>
+    <p class="proj-sub" data-i18n="sub">Six machine learning architectures, 25 million ultraviolet solar spectra, and a hunt for the earliest warning signs of a solar flare.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="solar-flare-dissertation.pdf" target="_blank" rel="noopener" data-i18n="btn-pdf">Read the full dissertation ↗</a>
+      <a class="btn btn-ghost" href="../index.html#projects" data-i18n="btn-all">All projects</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-problem">The Problem</h2>
+    <p data-i18n="problem-p1">Solar flares are sudden eruptions on the Sun that can disrupt satellites, GPS, radio communications, and power grids on Earth. Forecasters currently rely on magnetic field images of the solar surface, which are useful for tracking slow, day-scale build-up but give little warning in the final hours before an eruption.</p>
+    <p data-i18n="problem-p2">My dissertation asks a different question: can machine learning pull an early-warning signal out of ultraviolet spectra instead, light from two different layers of the Sun's atmosphere captured by two space-based instruments, <strong>Hinode/EIS</strong> (coronal) and <strong>IRIS</strong> (chromospheric)?</p>
+
+    <div class="figure-card">
+      <img src="figures/eis_iris_spectral_comparison.png" alt="Comparison of Hinode/EIS coronal spectra and IRIS chromospheric spectra">
+      <div class="figure-caption" data-i18n="fig-instruments"><strong>Two instruments, two layers.</strong> (a) Hinode/EIS iron emission lines from the corona: pre-flare profiles run narrower and more peaked than non-flare ones, especially on the hotter lines. (b) IRIS Mg II h&amp;k lines from the chromosphere: the pre-flare difference shows up as enhanced peak emission in the line cores.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-numbers">By the Numbers</h2>
+    <div class="stat-grid">
+      <div class="stat-tile">
+        <div class="stat-num">25M+</div>
+        <div class="stat-label" data-i18n="stat1">Ultraviolet spectra analysed</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">6</div>
+        <div class="stat-label" data-i18n="stat2">Classifier architectures compared</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">0.996</div>
+        <div class="stat-label" data-i18n="stat3">Best coronal ROC-AUC (XGBoost / MLP)</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">43</div>
+        <div class="stat-label" data-i18n="stat4">Flare events, Solar Cycles 24–25</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">0.889</div>
+        <div class="stat-label" data-i18n="stat5">Spectral transformer AUC on chromospheric timing</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-num">35</div>
+        <div class="stat-label" data-i18n="stat6">Co-observed dates, cross-instrument analysis</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-found">What I Found</h2>
+    <p data-i18n="found-p1">The headline result: the Sun's two atmospheric layers encode completely different kinds of information. The <strong>corona</strong> (the outer, hotter layer, seen by Hinode/EIS) reliably tells you <em>whether</em> an active region is going to flare: every one of six very different model families converged on the same answer, from logistic regression up to a Siamese network I trained with contrastive loss to learn a 64-dimensional embedding space, evaluated by nearest-neighbour lookup rather than a classification head. The signal stayed flat and stable across the entire 0–180 minute pre-flare window, no matter which architecture was asking.</p>
+
+    <div class="figure-card figure-card--sm">
+      <img src="figures/roc_curves_all_classifiers.png" alt="ROC curves comparing all six classifier architectures on coronal spectra">
+      <div class="figure-caption" data-i18n="fig-roc"><strong>Six architectures, one answer.</strong> Logistic regression, XGBoost, an MLP, a 1D-CNN, and a Siamese kNN all converge on strong, stable performance, with XGBoost and the MLP reaching ROC-AUC = 0.996.</div>
+    </div>
+
+    <p data-i18n="found-p2">The <strong>chromosphere</strong> (the cooler, lower layer, seen by IRIS) is messier but more interesting: for a meaningful subset of flare events it clearly encodes <em>when</em>. I built a spectral transformer from the ground up for this, multi-head self-attention over the wavelength axis with a learnable CLS token standing in for "the spectrum as a whole," trained on 22.6 million spectra, and it picked up a genuine temporal precursor signal in the final ~30 minutes before onset.</p>
+
+    <div class="callout" data-i18n="callout">
+      <strong>Are the two signals telling the same story?</strong> I tested this three separate ways across 35 dates observed by both instruments simultaneously: canonical correlation analysis (CCA) for shared linear structure, maximum mean discrepancy (MMD) for distributional overlap, and optimal transport to see how much "work" it takes to morph one instrument's spectral distribution into the other's. All three point the same way. CCA cross-instrument retrieval came back at <strong>0%</strong> against a 2.9% chance baseline: decisive evidence that the corona and chromosphere aren't redundant views of the same thing, they're genuinely complementary. That result motivates the two-stage forecasting architecture I propose: use the corona to screen which active regions are dangerous, then watch the chromosphere on just those regions for the timing signal.
+    </div>
+
+    <p data-i18n="found-p3">One of my favourite side-results: a hand-built 9-feature representation, just the kurtosis, skewness, and spread of three iron emission lines, outperformed an optimal 9-component PCA projection by 3.5 ROC-AUC points. Sometimes knowing the physics beats throwing more data-driven dimensionality reduction at a problem.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-eng">Engineering, Not Just Modelling</h2>
+    <p class="lede" data-i18n="eng-lede">25 million spectra don't stay manageable by accident. Alongside the modelling, a fair amount of this dissertation was software engineering.</p>
+
+    <div class="figure-card">
+      <img src="figures/data_hierarchy.png" alt="Data pipeline diagram showing the EIS and IRIS preprocessing hierarchies from raw raster scan down to final feature vectors">
+      <div class="figure-caption" data-i18n="fig-hierarchy"><strong>Two parallel data pipelines.</strong> Both instruments' raw rasters get reduced through the same conceptual stages, spatial grid → pixel → spectrum → feature vector, down to final datasets of 2.46M (EIS) and 22.6M (IRIS) spectra, with flare-timing labels inherited automatically at every stage.</div>
+    </div>
+
+    <div class="eng-list">
+      <div class="eng-item">
+        <h3 data-i18n="eng1-h">Three-layer validation, not just a train/test split</h3>
+        <p data-i18n="eng1-p">Every notebook runs automatic sanity checks on data shapes, label balance, and train/val/test disjointness that fail loudly on regression. On top of that, dataset summaries are reproduced and diffed against a canonical seed-42 split, and bootstrap resampling, multi-seed re-evaluation, and stratified k-fold cross-validation run as integration tests across the full pipeline.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng2-h">Cache invalidation, solved properly</h3>
+        <p data-i18n="eng2-p">Intermediate results are pickle-cached and keyed by a <code>sha1</code> hash of the generating configuration, so a stale cache can't silently survive a parameter change. An explicit <code>FORCE_REFIT</code> toggle forces a clean rebuild when needed.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng3-h">A pipeline that runs anywhere</h3>
+        <p data-i18n="eng3-p">Fifteen notebooks (one main analysis pipeline, plus figure-generation and defensive-baseline groups) share preprocessing utilities and are version-controlled in Git. Each one auto-detects whether it's running on Google Colab or a local Python 3.10 environment, backed by a pinned <code>requirements.txt</code> and a README.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng4-h">Interpretability, built in</h3>
+        <p data-i18n="eng4-p">It's not enough for a model to be right, I wanted to know why. Grad-CAM on the 1D-CNN and SHAP attribution on the tree-based models both point at the same wavelength regions the domain physics would predict, which is its own kind of test.</p>
+      </div>
+    </div>
+
+    <div class="figure-card">
+      <img src="figures/iris_gradcam_heatmap.png" alt="Grad-CAM importance curve over IRIS Mg II wavelength bins for the 1D-CNN">
+      <div class="figure-caption" data-i18n="fig-gradcam"><strong>Making the model show its work.</strong> Grad-CAM importance across the Mg II h&amp;k window for the 1D-CNN, pre-flare spectra (red) versus quiet Sun (blue), highest right at the line cores the physics says should matter.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-rq">Research Questions</h2>
+    <div class="rq-list">
+      <div class="rq-item">
+        <div class="rq-tag">RQ1</div>
+        <p data-i18n="rq1">Can pre-flare coronal spectra be reliably distinguished from non-flaring spectra under strict observation-disjoint evaluation, and is that result robust across classifier architectures from linear to metric-learning?</p>
+      </div>
+      <div class="rq-item">
+        <div class="rq-tag">RQ2</div>
+        <p data-i18n="rq2">How does coronal classifier confidence vary with time-to-flare across the 0–180 minute pre-flare window: does it rise monotonically as prior work found for the chromosphere, or does it follow a different pattern?</p>
+      </div>
+      <div class="rq-item">
+        <div class="rq-tag">RQ3</div>
+        <p data-i18n="rq3">Do coronal and chromospheric learned representations encode shared or complementary information about the pre-flare state on co-observed flare events?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-tools">Tools &amp; Methods</h2>
+    <div class="tool-tags">
+      <span class="tool-tag">Python</span>
+      <span class="tool-tag">PyTorch</span>
+      <span class="tool-tag">XGBoost</span>
+      <span class="tool-tag">scikit-learn</span>
+      <span class="tool-tag" data-i18n="tool-siamese">Siamese Networks</span>
+      <span class="tool-tag" data-i18n="tool-transformer">Spectral Transformers</span>
+      <span class="tool-tag">1D-CNN + Grad-CAM</span>
+      <span class="tool-tag">SHAP</span>
+      <span class="tool-tag" data-i18n="tool-ot">Optimal Transport</span>
+      <span class="tool-tag">CCA</span>
+      <span class="tool-tag">Pandas</span>
+      <span class="tool-tag">NumPy</span>
+      <span class="tool-tag">SunPy</span>
+      <span class="tool-tag">Astropy</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-colophon">Colophon</h2>
+    <div class="colophon">
+      <div><span class="k" data-i18n="k-title">Title</span>Coronal Persistence, Chromospheric Evolution: A Multi-Architecture Machine Learning Analysis of Pre-Flare Solar Spectra</div>
+      <div><span class="k" data-i18n="k-degree">Degree</span><span data-i18n="v-degree">BSc (Hons) Computer Science with Industrial Placement, Newcastle University</span></div>
+      <div><span class="k" data-i18n="k-supervision">Supervision</span><span data-i18n="v-supervision">Dr Varun Ojha (academic) · Dr Andy SH. TO &amp; Dr Henrik Eklund (external, ESA)</span></div>
+      <div><span class="k" data-i18n="k-collab">Collaboration</span><span data-i18n="v-collab">European Space Agency</span></div>
+      <div><span class="k" data-i18n="k-submitted">Submitted</span><span data-i18n="v-submitted">May 2026</span></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© 2026 Despina Ioannide</p>
+    <a href="../index.html#projects" data-i18n="footer-back">← Back to all projects</a>
+  </div>
+</footer>
+
+<script>
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('site-theme', theme);
+  }
+  function toggleTheme(){
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  setTheme(localStorage.getItem('site-theme') || 'dark');
+</script>
+
+<script>
+  var zhDict = {
+    'back-link': '← 返回主页',
+    'eyebrow': '本科毕业论文 · 纽卡斯尔大学 × 欧洲航天局',
+    'title': '太阳耀斑预测',
+    'sub': '六种机器学习架构，2500万条太阳紫外光谱，只为找到太阳耀斑最早的预警信号。',
+    'btn-pdf': '阅读完整论文 ↗',
+    'btn-all': '所有项目',
+
+    'h2-problem': '问题所在',
+    'problem-p1': '太阳耀斑是太阳表面突然爆发的能量释放，可能干扰卫星、GPS、无线电通讯，甚至地球上的电网。目前的预报主要依赖太阳表面的磁场图像，这类数据适合追踪以天为尺度的缓慢积累过程，但在耀斑爆发前的最后几个小时几乎无法提供预警。',
+    'problem-p2': '我的毕业论文提出了一个不同的问题：机器学习能否从紫外光谱中提取出更早的预警信号？这些数据来自太阳大气两个不同层次的光，分别由两台空间仪器——<strong>Hinode/EIS</strong>（日冕层）和 <strong>IRIS</strong>（色球层）——采集。',
+    'fig-instruments': '<strong>两台仪器，两个层次。</strong>(a) 来自日冕层的 Hinode/EIS 铁发射线：耀斑前的谱线比非耀斑活动区更窄、更尖锐，在温度更高的谱线上尤为明显。(b) 来自色球层的 IRIS Mg II h&amp;k 谱线：耀斑前的差异体现为谱线核心处峰值发射增强。',
+
+    'h2-numbers': '关键数据',
+    'stat1': '分析的紫外光谱数量',
+    'stat2': '比较的分类器架构',
+    'stat3': '日冕层最佳 ROC-AUC（XGBoost / MLP）',
+    'stat4': '耀斑事件，第24–25太阳活动周',
+    'stat5': '色球层时间预测的 Transformer AUC',
+    'stat6': '跨仪器分析的联合观测日期数',
+
+    'h2-found': '研究发现',
+    'found-p1': '最核心的发现是：太阳大气的这两个层次编码着完全不同类型的信息。<strong>日冕层</strong>（外层、温度更高，由 Hinode/EIS 观测）能可靠地判断一个活动区<em>是否</em>会产生耀斑：六种架构迥异的模型，从逻辑回归，到我用对比损失训练、学习64维嵌入空间并通过最近邻检索评估的孪生网络（Siamese Network），全部得出了一致的结论。无论使用哪种架构，这一信号在整个0–180分钟的耀斑前窗口内都保持稳定平坦。',
+    'fig-roc': '<strong>六种架构，一个答案。</strong>逻辑回归、XGBoost、多层感知机（MLP）、一维卷积神经网络（1D-CNN）与孪生 kNN 均取得了稳定优异的表现，其中 XGBoost 和 MLP 的 ROC-AUC 达到 0.996。',
+    'found-p2': '<strong>色球层</strong>（更靠近太阳表面、温度较低，由 IRIS 观测）的信号更复杂，但也更有意思：在相当一部分耀斑事件中，它能清楚地编码耀斑发生的<em>时间</em>。为此我从零构建了一个光谱 Transformer，在波长维度上使用多头自注意力机制，并用一个可学习的 CLS token 代表"整条光谱"的整体信息，在2260万条光谱上训练，成功捕捉到了耀斑发生前约30分钟内真实存在的时间性前兆信号。',
+    'callout': '<strong>这两个信号说的是同一件事吗？</strong>我在两台仪器同时观测的35个日期上，用三种独立方法分别验证了这个问题：典型相关分析（CCA）检验共享的线性结构，最大均值差异（MMD）检验分布重叠程度，以及最优传输方法，用来衡量将一台仪器的光谱分布"搬运"为另一台仪器分布所需的"代价"。三种方法得出了一致的结论。CCA 的跨仪器检索准确率仅为 <strong>0%</strong>，而随机基线为2.9%，这是强有力的证据，说明日冕层与色球层并非同一信息的冗余呈现，而是真正互补的两种信号。这一结果也促成了我提出的两阶段预报架构：先用日冕层信号筛选出危险的活动区，再针对这些区域监测色球层信号以判断具体时间。',
+    'found-p3': '我个人最喜欢的一个附带发现：一个手工构建的9维特征表示，仅由三条铁发射线的峰度、偏度和离散程度组成，比最优的9维 PCA 投影高出3.5个 ROC-AUC 百分点。有时候，理解背后的物理原理比单纯依赖数据驱动的降维方法更有效。',
+
+    'h2-eng': '工程实践，而不仅是建模',
+    'eng-lede': '2500万条光谱数据不会自己变得井井有条。除了建模工作之外，这篇论文有相当一部分内容其实是软件工程。',
+    'fig-hierarchy': '<strong>两条并行的数据管道。</strong>两台仪器的原始光栅数据都经过相同的处理阶段，空间网格 → 像素 → 光谱 → 特征向量，最终形成246万条（EIS）和2260万条（IRIS）光谱的数据集，耀斑时间标签在每个阶段自动继承。',
+    'eng1-h': '三层验证机制，而不只是训练/测试集划分',
+    'eng1-p': '每个 notebook 都会自动检查数据形状、标签平衡性以及训练/验证/测试集的互斥性，一旦出现回归问题就会明确报错。此外，数据集摘要会与固定种子（seed-42）划分的基准结果进行复现比对，并通过自助重采样（bootstrap）、多随机种子重复评估以及分层 k 折交叉验证，作为覆盖整条流水线的集成测试。',
+    'eng2-h': '缓存失效问题，妥善解决',
+    'eng2-p': '中间结果通过 pickle 缓存，并以生成该结果的配置的 <code>sha1</code> 哈希值作为键，因此参数一旦改变，过时的缓存不会被悄悄沿用。还提供了显式的 <code>FORCE_REFIT</code> 开关，可在需要时强制重新计算。',
+    'eng3-h': '一套可以在任何环境运行的流水线',
+    'eng3-p': '15个 notebook（包括主分析流水线，以及图表生成和防御性基线两组）共享预处理工具函数，并通过 Git 进行版本管理。每个 notebook 都能自动识别当前运行在 Google Colab 还是本地 Python 3.10 环境中，并配有固定版本的 <code>requirements.txt</code> 和 README 文档。',
+    'eng4-h': '可解释性，从一开始就内置',
+    'eng4-p': '模型给出正确答案是不够的，我还想知道原因。对1D-CNN使用 Grad-CAM、对树模型使用 SHAP 归因分析，两者都指向了物理原理所预测的相同波长区域，这本身也是一种验证方式。',
+    'fig-gradcam': '<strong>让模型展示它的推理依据。</strong>1D-CNN 在 Mg II h&amp;k 波段上的 Grad-CAM 重要性分布，耀斑前光谱（红色）与宁静太阳光谱（蓝色）对比，重要性峰值恰好出现在物理上应当重要的谱线核心处。',
+
+    'h2-rq': '研究问题',
+    'rq1': '在严格的观测互斥评估条件下，耀斑前的日冕层光谱能否被可靠地与非耀斑光谱区分开来？这一结果在从线性模型到度量学习等不同分类器架构下是否稳健？',
+    'rq2': '在0–180分钟的耀斑前窗口内，日冕层分类器的置信度如何随距耀斑发生的时间变化？它是否像此前关于色球层的研究那样单调上升，还是呈现出不同的规律？',
+    'rq3': '在联合观测的耀斑事件中，日冕层和色球层学习到的表示，编码的是关于耀斑前状态的共享信息，还是互补信息？',
+
+    'h2-tools': '工具与方法',
+    'tool-siamese': 'Siamese Networks（孪生网络）',
+    'tool-transformer': 'Spectral Transformers（光谱 Transformer）',
+    'tool-ot': 'Optimal Transport（最优传输）',
+
+    'h2-colophon': '文档信息',
+    'k-title': '标题',
+    'k-degree': '学位',
+    'k-supervision': '指导教师',
+    'k-collab': '合作机构',
+    'k-submitted': '提交时间',
+    'v-degree': '计算机科学荣誉学士学位（含行业实习）· 纽卡斯尔大学',
+    'v-supervision': 'Varun Ojha 博士（校内导师）· Andy SH. TO 博士与 Henrik Eklund 博士（校外导师，欧洲航天局）',
+    'v-collab': '欧洲航天局',
+    'v-submitted': '2026年5月',
+
+    'footer-back': '← 返回所有项目'
+  };
+
+  var currentLang = 'en';
+  var enCache = {};
+
+  function setLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(lang === 'zh'){
+        if(!(key in enCache)) enCache[key] = el.innerHTML;
+        if(zhDict[key] !== undefined) el.innerHTML = zhDict[key];
+      } else if(key in enCache){
+        el.innerHTML = enCache[key];
+      }
+    });
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    localStorage.setItem('site-lang', lang);
+  }
+
+  function toggleLang(){
+    setLang(currentLang === 'zh' ? 'en' : 'zh');
+  }
+
+  var savedLang = localStorage.getItem('site-lang');
+  if(savedLang === 'zh') setLang('zh');
+</script>
+
+</body>
+</html>

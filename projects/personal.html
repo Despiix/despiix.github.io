@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Projects · Despina Ioannide</title>
+<meta name="description" content="Personal projects by Despina Ioannide, including Frame, an offline-first PWA for drilling Mandarin grammar, plus a live feed of public GitHub repositories.">
+<script>
+  (function(){
+    var t = localStorage.getItem('site-theme') || 'dark';
+    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --grad-top: #f8ded3;
+    --grad-mid: #f0ae93;
+    --grad-bottom: #dd7a58;
+
+    --bg: #fdf3ec;
+    --bg-panel: #f9e8dd;
+    --ink: #2b2019;
+    --ink-dim: #6f5b4c;
+    --ink-faint: #a4917f;
+    --hero-ink: #fffaf5;
+    --hero-ink-dim: rgba(255,250,245,0.86);
+
+    --accent: #d9714a;
+    --accent-deep: #b85535;
+    --line: rgba(43,32,25,0.13);
+    --line-strong: rgba(43,32,25,0.24);
+    --hero-glow: rgba(184,85,53,0.6);
+
+    --display: 'Space Grotesk', 'Jost', sans-serif;
+    --body-serif: 'Inter', 'Jost', sans-serif;
+    --label: 'Jost', 'Inter', sans-serif;
+    --max: 880px;
+
+    --nav-bg: rgba(253,243,236,0.72);
+  }
+
+  :root[data-theme="dark"]{
+    --grad-top: #260c31;
+    --grad-mid: #671372;
+    --grad-bottom: #7a3c22;
+
+    --bg: #16120e;
+    --bg-panel: #201a15;
+    --ink: #f1e6db;
+    --ink-dim: #c4b3a2;
+    --ink-faint: #8d7a68;
+    --line: rgba(241,230,219,0.12);
+    --line-strong: rgba(241,230,219,0.22);
+
+    --accent: #e8935f;
+    --accent-deep: #f0a877;
+
+    --nav-bg: rgba(22,18,14,0.72);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-serif);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 40px; position: relative; }
+
+  .label{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    height: 68px;
+    padding: 0 40px;
+  }
+  .back-link{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover{ color: var(--accent-deep); }
+  .nav-right{ display: flex; align-items: center; gap: 14px; }
+  .lang-toggle{
+    font-family: var(--label);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .lang-toggle:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+  .theme-toggle{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover{ border-color: var(--accent-deep); transform: rotate(12deg); }
+
+  /* ---------- HERO ---------- */
+  header.proj-hero{
+    position: relative;
+    overflow: hidden;
+    padding: 76px 0 60px;
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--grad-top) 62%, transparent) 0%, color-mix(in srgb, var(--grad-mid) 74%, transparent) 55%, color-mix(in srgb, var(--grad-bottom) 86%, transparent) 100%),
+      url('personal.png');
+    background-size: cover;
+    background-position: center;
+    transition: background-color 0.3s ease;
+  }
+  header.proj-hero::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 130px;
+    background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  header.proj-hero .wrap{ position: relative; z-index: 1; }
+  .proj-eyebrow{
+    color: var(--hero-ink-dim);
+    margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--hero-glow), 0 1px 3px var(--hero-glow);
+  }
+  h1.proj-title{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--hero-ink);
+    margin-bottom: 20px;
+    text-shadow: 0 0 16px var(--hero-glow), 0 2px 6px var(--hero-glow);
+  }
+  .proj-sub{
+    font-size: clamp(1.02rem, 2vw, 1.18rem);
+    color: var(--hero-ink);
+    text-shadow: 0 0 12px var(--hero-glow), 0 1px 4px var(--hero-glow);
+    max-width: 620px;
+    margin-bottom: 34px;
+  }
+  .cta-row{ display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: 999px;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{ background: var(--hero-ink); color: #2b2019; }
+  .btn-primary:hover{ transform: translateY(-2px); }
+  .btn-ghost{ border: 1px solid rgba(255,250,245,0.55); color: var(--hero-ink); }
+  .btn-ghost:hover{ border-color: var(--hero-ink); transform: translateY(-2px); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--line); }
+  section:first-of-type{ border-top: none; }
+  h2{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 1.9rem);
+    margin-bottom: 22px;
+  }
+  .lede{ color: var(--ink-dim); font-size: 1.1rem; margin-bottom: 18px; }
+  p{ margin-bottom: 16px; }
+  p:last-child{ margin-bottom: 0; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- APP CARD (Frame) ---------- */
+  .app-card{
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .app-icon{
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(155deg, var(--accent), var(--accent-deep));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.5rem;
+    color: #fffaf5;
+    flex-shrink: 0;
+  }
+  .app-meta .app-name{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: var(--ink);
+  }
+  .app-meta .app-kind{
+    font-family: var(--label);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    margin-top: 3px;
+  }
+
+  /* ---------- FEATURE LIST ---------- */
+  .eng-list{ display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+  .eng-item{ padding-left: 18px; border-left: 2px solid var(--line-strong); }
+  .eng-item h3{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .eng-item p{ color: var(--ink-dim); margin: 0; font-size: 0.98rem; }
+
+  /* ---------- TOOL TAGS ---------- */
+  .tool-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; }
+  .tool-tag{ font-family: var(--label); font-size: 0.9rem; color: var(--ink-dim); }
+  .tool-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+
+  /* ---------- GITHUB ---------- */
+  .gh-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .gh-profile-link{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 8px 16px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .gh-profile-link:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+  .repo-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px){ .repo-grid{ grid-template-columns: 1fr; } }
+  .repo-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .repo-card:hover{ border-color: var(--accent-deep); transform: translateY(-2px); }
+  .repo-name{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.05rem;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .repo-name .priv-tag{
+    font-family: var(--label);
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+  .repo-desc{ color: var(--ink-dim); font-size: 0.92rem; flex: 1; }
+  .repo-foot{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: var(--label);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+  }
+  .repo-lang{ display: flex; align-items: center; gap: 5px; }
+  .repo-lang-dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+  .gh-status{
+    font-family: var(--label);
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .note{
+    font-family: var(--label);
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    margin-top: 20px;
+  }
+
+  footer{ padding: 40px 0 50px; border-top: 1px solid var(--line); background: var(--bg-panel); }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .footer-row p{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-faint); margin: 0; }
+  .footer-row a{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-dim); transition: color 0.2s ease; }
+  .footer-row a:hover{ color: var(--accent-deep); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="back-link" href="../index.html#projects" data-i18n="back-link">← Back to portfolio</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="wrap">
+    <div class="proj-eyebrow label" data-i18n="eyebrow">Personal Projects</div>
+    <h1 class="proj-title" data-i18n="title">Outside of Work</h1>
+    <p class="proj-sub" data-i18n="sub">What I build when nobody's assigning it. A study app I actually use daily, plus whatever's public on GitHub.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="https://github.com/Despiix" target="_blank" rel="noopener">github.com/Despiix ↗</a>
+      <a class="btn btn-ghost" href="../index.html#projects" data-i18n="btn-all">All projects</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Frame</h2>
+    <div class="app-card">
+      <div class="app-icon">文</div>
+      <div class="app-meta">
+        <div class="app-name">Frame</div>
+        <div class="app-kind" data-i18n="app-kind">React · Progressive Web App</div>
+      </div>
+    </div>
+    <p data-i18n="frame-p">An offline-first study app for drilling Mandarin grammar patterns, built because I'm living the problem it solves while studying for my move to Tsinghua. It installs straight to your phone as a PWA, no app store, works with no connection at all, and grades your answers with AI whenever you're online.</p>
+
+    <div class="eng-list">
+      <div class="eng-item">
+        <h3 data-i18n="eng1-h">Offline-first by design</h3>
+        <p data-i18n="eng1-p">The whole point is that it works without signal. When there's no connection, grading falls back to a local grader instead of just failing, with a visible offline indicator so you always know which mode you're in.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng2-h">Speaking practice</h3>
+        <p data-i18n="eng2-p">A voice chatbot you can actually talk to, which listens to your spoken Mandarin and corrects it in real time.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng3-h">Built for retention, not just review</h3>
+        <p data-i18n="eng3-p">A mistake-repeater mode resurfaces the grammar patterns you actually get wrong instead of drilling everything equally, alongside a streak system and a full set of grammar tests.</p>
+      </div>
+    </div>
+
+    <div class="tool-tags" style="margin-top:22px;">
+      <span class="tool-tag">React</span>
+      <span class="tool-tag">PWA / Service Workers</span>
+      <span class="tool-tag">AI Grading</span>
+      <span class="tool-tag">Speech Recognition</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="gh-header">
+      <h2 style="margin-bottom:0;" data-i18n="h2-github">From GitHub</h2>
+      <a class="gh-profile-link" href="https://github.com/Despiix" target="_blank" rel="noopener" data-i18n="gh-profile">View full profile ↗</a>
+    </div>
+    <div id="repoGrid" class="repo-grid">
+      <div class="gh-status" id="repoStatus" data-i18n="gh-loading">Loading repositories…</div>
+    </div>
+
+    <p class="note" data-i18n="gh-note">I build a lot more than what's shown here, most of it stays private while it's rough or unfinished, or just for me. More public repos are coming soon.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© 2026 Despina Ioannide</p>
+    <a href="../index.html#projects" data-i18n="footer-back">← Back to all projects</a>
+  </div>
+</footer>
+
+<script>
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('site-theme', theme);
+  }
+  function toggleTheme(){
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  setTheme(localStorage.getItem('site-theme') || 'dark');
+</script>
+
+<script>
+  var zhDict = {
+    'back-link': '← 返回主页',
+    'eyebrow': '个人项目',
+    'title': '工作之外',
+    'sub': '工作之余，我自己动手做的东西：一款我每天都在用的学习应用，以及 GitHub 上公开的其他项目。',
+    'btn-all': '所有项目',
+
+    'app-kind': 'React · 渐进式网络应用（PWA）',
+    'frame-p': '一款离线优先的中文语法练习应用。它诞生的原因很简单：为了准备赴清华大学的学习，我自己正切身经历着它要解决的问题。它可以像 PWA 一样直接安装到手机上，无需应用商店，完全离线也能使用，联网时还会通过 AI 为你的答案打分。',
+
+    'eng1-h': '从设计上就是离线优先',
+    'eng1-p': '整个应用的核心，就是在没有信号的情况下也能正常使用。断网时，评分会自动切换到本地评分器，而不是直接失败，界面上还会显示明确的离线提示，让你随时清楚自己处于哪种模式。',
+    'eng2-h': '口语练习',
+    'eng2-p': '一个真正可以对话的语音聊天机器人，它会听你说的中文，并实时给出纠正。',
+    'eng3-h': '为记忆巩固而设计，而不只是复习',
+    'eng3-p': '错题重练模式会有针对性地重新出现你真正做错的语法点，而不是对所有内容平均分配练习量，此外还配有连续打卡系统和一整套语法测试。',
+
+    'h2-github': '来自 GitHub',
+    'gh-profile': '查看完整主页 ↗',
+    'gh-loading': '正在加载仓库…',
+    'gh-note': '我做的项目远不止这里展示的这些，其中大部分因为还比较粗糙、未完成，或者纯粹是自己练手用的，所以暂时保持私有。更多公开仓库即将上线。',
+
+    'footer-back': '← 返回所有项目'
+  };
+
+  var currentLang = 'en';
+  var enCache = {};
+
+  function setLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(lang === 'zh'){
+        if(!(key in enCache)) enCache[key] = el.innerHTML;
+        if(zhDict[key] !== undefined) el.innerHTML = zhDict[key];
+      } else if(key in enCache){
+        el.innerHTML = enCache[key];
+      }
+    });
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    localStorage.setItem('site-lang', lang);
+  }
+
+  function toggleLang(){
+    setLang(currentLang === 'zh' ? 'en' : 'zh');
+  }
+
+  var savedLang = localStorage.getItem('site-lang');
+  if(savedLang === 'zh') setLang('zh');
+</script>
+
+<script>
+  (function(){
+    var GH_USER = 'Despiix';
+    var SHOW = ['Evolutionary_Algorithms-Image_Generator-Biocomputing', 'Mandarin-Grammar'];
+    var grid = document.getElementById('repoGrid');
+    var status = document.getElementById('repoStatus');
+    var msgs = {
+      error: { en: 'Could not load repositories right now, visit the GitHub profile directly.', zh: '暂时无法加载仓库，请直接访问 GitHub 主页查看。' },
+      noDesc: { en: 'No description yet.', zh: '暂无描述。' }
+    };
+    function t(key){ return msgs[key][typeof currentLang !== 'undefined' && currentLang === 'zh' ? 'zh' : 'en']; }
+
+    Promise.all(SHOW.map(function(name){
+      return fetch('https://api.github.com/repos/' + GH_USER + '/' + name)
+        .then(function(res){ return res.ok ? res.json() : null; })
+        .catch(function(){ return null; });
+    }))
+      .then(function(results){
+        var visible = results.filter(Boolean);
+        if(!visible.length){
+          status.textContent = t('error');
+          return;
+        }
+        grid.innerHTML = '';
+        visible.forEach(function(repo){
+          var card = document.createElement('a');
+          card.className = 'repo-card';
+          card.href = repo.html_url;
+          card.target = '_blank';
+          card.rel = 'noopener';
+
+          var name = document.createElement('div');
+          name.className = 'repo-name';
+          name.textContent = repo.name;
+          card.appendChild(name);
+
+          var desc = document.createElement('div');
+          desc.className = 'repo-desc';
+          desc.textContent = repo.description || t('noDesc');
+          card.appendChild(desc);
+
+          var foot = document.createElement('div');
+          foot.className = 'repo-foot';
+          var bits = [];
+          if(repo.language){
+            bits.push('<span class="repo-lang"><span class="repo-lang-dot"></span>' + repo.language + '</span>');
+          }
+          bits.push('<span>★ ' + repo.stargazers_count + '</span>');
+          foot.innerHTML = bits.join('');
+          card.appendChild(foot);
+
+          grid.appendChild(card);
+        });
+      })
+      .catch(function(){
+        status.textContent = t('error');
+      });
+  })();
+</script>
+
+</body>
+</html>
