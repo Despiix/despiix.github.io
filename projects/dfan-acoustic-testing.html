@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFAN Acoustic Testing · Despina Ioannide</title>
+<meta name="description" content="Industrial placement at UK Research and Innovation: microphone coherence testing for Direct Field Acoustic Noise (DFAN) at RAL Space, and Amplify, the software tool built to run it.">
+<script>
+  (function(){
+    var t = localStorage.getItem('site-theme') || 'dark';
+    if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --grad-top: #f8ded3;
+    --grad-mid: #f0ae93;
+    --grad-bottom: #dd7a58;
+
+    --bg: #fdf3ec;
+    --bg-panel: #f9e8dd;
+    --ink: #2b2019;
+    --ink-dim: #6f5b4c;
+    --ink-faint: #a4917f;
+    --hero-ink: #fffaf5;
+    --hero-ink-dim: rgba(255,250,245,0.86);
+
+    --accent: #d9714a;
+    --accent-deep: #b85535;
+    --line: rgba(43,32,25,0.13);
+    --line-strong: rgba(43,32,25,0.24);
+    --hero-glow: rgba(184,85,53,0.6);
+
+    --display: 'Space Grotesk', 'Jost', sans-serif;
+    --body-serif: 'Inter', 'Jost', sans-serif;
+    --label: 'Jost', 'Inter', sans-serif;
+    --max: 880px;
+
+    --nav-bg: rgba(253,243,236,0.72);
+  }
+
+  :root[data-theme="dark"]{
+    --grad-top: #260c31;
+    --grad-mid: #671372;
+    --grad-bottom: #7a3c22;
+
+    --bg: #16120e;
+    --bg-panel: #201a15;
+    --ink: #f1e6db;
+    --ink-dim: #c4b3a2;
+    --ink-faint: #8d7a68;
+    --line: rgba(241,230,219,0.12);
+    --line-strong: rgba(241,230,219,0.22);
+
+    --accent: #e8935f;
+    --accent-deep: #f0a877;
+
+    --nav-bg: rgba(22,18,14,0.72);
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body-serif);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent); color: #fff; }
+
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 40px; position: relative; }
+
+  .label{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--nav-bg);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  nav .wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    height: 68px;
+    padding: 0 40px;
+  }
+  .back-link{
+    font-family: var(--label);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s ease;
+  }
+  .back-link:hover{ color: var(--accent-deep); }
+  .nav-right{ display: flex; align-items: center; gap: 14px; }
+  .lang-toggle{
+    font-family: var(--label);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: none;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    flex-shrink: 0;
+  }
+  .lang-toggle:hover{ color: var(--accent-deep); border-color: var(--accent-deep); }
+  .theme-toggle{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: none;
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .theme-toggle:hover{ border-color: var(--accent-deep); transform: rotate(12deg); }
+
+  /* ---------- HERO ---------- */
+  header.proj-hero{
+    position: relative;
+    overflow: hidden;
+    padding: 76px 0 60px;
+    background:
+      linear-gradient(165deg, color-mix(in srgb, var(--grad-top) 55%, transparent) 0%, color-mix(in srgb, var(--grad-mid) 68%, transparent) 55%, color-mix(in srgb, var(--grad-bottom) 82%, transparent) 100%),
+      url('DFAN.png');
+    background-size: cover;
+    background-position: center;
+    transition: background-color 0.3s ease;
+  }
+  header.proj-hero::after{
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 130px;
+    background: linear-gradient(0deg, var(--bg) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  header.proj-hero .wrap{ position: relative; z-index: 1; }
+  .proj-eyebrow{
+    color: var(--hero-ink-dim);
+    margin-bottom: 16px;
+    text-shadow: 0 0 10px var(--hero-glow), 0 1px 3px var(--hero-glow);
+  }
+  h1.proj-title{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--hero-ink);
+    margin-bottom: 20px;
+    text-shadow: 0 0 16px var(--hero-glow), 0 2px 6px var(--hero-glow);
+  }
+  .proj-sub{
+    font-size: clamp(1.02rem, 2vw, 1.18rem);
+    color: var(--hero-ink);
+    text-shadow: 0 0 12px var(--hero-glow), 0 1px 4px var(--hero-glow);
+    max-width: 620px;
+    margin-bottom: 14px;
+  }
+  .photo-credit{
+    font-family: var(--label);
+    font-size: 0.66rem;
+    letter-spacing: 0.06em;
+    color: var(--hero-ink-dim);
+    text-shadow: 0 0 8px var(--hero-glow);
+    margin-bottom: 30px;
+  }
+  .cta-row{ display: flex; flex-wrap: wrap; gap: 14px; }
+  .btn{
+    font-family: var(--label);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 24px;
+    border-radius: 999px;
+    transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{ background: var(--hero-ink); color: #2b2019; }
+  .btn-primary:hover{ transform: translateY(-2px); }
+  .btn-ghost{ border: 1px solid rgba(255,250,245,0.55); color: var(--hero-ink); }
+  .btn-ghost:hover{ border-color: var(--hero-ink); transform: translateY(-2px); }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding: 64px 0; border-top: 1px solid var(--line); }
+  section:first-of-type{ border-top: none; }
+  h2{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 3.5vw, 1.9rem);
+    margin-bottom: 22px;
+  }
+  .lede{ color: var(--ink-dim); font-size: 1.1rem; margin-bottom: 18px; }
+  p{ margin-bottom: 16px; }
+  p:last-child{ margin-bottom: 0; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  /* ---------- FIGURES ---------- */
+  .figure-card{
+    background: #fdfaf7;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 18px 16px;
+    margin: 22px 0;
+    box-shadow: 0 6px 18px rgba(43,32,25,0.08);
+  }
+  .figure-card img{ width: 100%; height: auto; display: block; border-radius: 3px; }
+  .figure-card--sm img{ max-width: 480px; margin: 0 auto; }
+  .figure-caption{
+    font-family: var(--label);
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  .figure-caption strong{ color: var(--ink-dim); }
+
+  /* ---------- ENGINEERING LIST ---------- */
+  .eng-list{ display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
+  .eng-item{ padding-left: 18px; border-left: 2px solid var(--line-strong); }
+  .eng-item h3{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1.02rem;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .eng-item p{ color: var(--ink-dim); margin: 0; font-size: 0.98rem; }
+
+  .note{
+    font-family: var(--label);
+    font-size: 0.76rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    margin-top: 6px;
+  }
+
+  /* ---------- TOOL TAGS ---------- */
+  .tool-tags{ display:flex; flex-wrap: wrap; gap: 8px 4px; }
+  .tool-tag{ font-family: var(--label); font-size: 0.9rem; color: var(--ink-dim); }
+  .tool-tag:not(:last-child)::after{ content:"·"; margin-left: 10px; color: var(--ink-faint); }
+
+  /* ---------- COLOPHON ---------- */
+  .colophon{
+    background: var(--bg-panel);
+    border-radius: 8px;
+    padding: 24px 26px;
+    font-size: 0.94rem;
+    color: var(--ink-dim);
+  }
+  .colophon div{ margin-bottom: 6px; }
+  .colophon div:last-child{ margin-bottom: 0; }
+  .colophon .k{
+    font-family: var(--label);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-right: 8px;
+  }
+
+  footer{ padding: 40px 0 50px; border-top: 1px solid var(--line); background: var(--bg-panel); }
+  .footer-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+  .footer-row p{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-faint); margin: 0; }
+  .footer-row a{ font-family: var(--label); font-size: 0.7rem; color: var(--ink-dim); transition: color 0.2s ease; }
+  .footer-row a:hover{ color: var(--accent-deep); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="back-link" href="../index.html#projects" data-i18n="back-link">← Back to portfolio</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" onclick="toggleLang()">中文</button>
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+</nav>
+
+<header class="proj-hero">
+  <div class="wrap">
+    <div class="proj-eyebrow label" data-i18n="eyebrow">Industrial Placement · UK Research and Innovation, RAL Space</div>
+    <h1 class="proj-title">DFAN Acoustic Testing</h1>
+    <p class="proj-sub" data-i18n="sub">Microphone coherence testing for Direct Field Acoustic Noise testing, and Amplify, the software tool I built to run it.</p>
+    <div class="photo-credit" data-i18n="photo-credit">Facility photo sourced online, not taken by the author.</div>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="mantid-ip-poster.pdf" target="_blank" rel="noopener" data-i18n="btn-poster">View my placement poster ↗</a>
+      <a class="btn btn-ghost" href="../index.html#projects" data-i18n="btn-all">All projects</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-what">What DFAN Is</h2>
+    <p data-i18n="what-p1">Spacecraft have to survive the acoustic environment of their own launch, sound pressure levels loud enough to damage delicate hardware before it ever reaches orbit. <strong>Direct Field Acoustic Noise (DFAN) testing</strong> reproduces that environment on the ground using large arrays of loudspeakers, rather than the reverberant chambers traditionally used for spacecraft acoustic qualification.</p>
+    <p data-i18n="what-p2">Getting that simulated sound field right matters: if it isn't sufficiently diffuse and spatially uniform, the test doesn't faithfully represent what the spacecraft will actually experience at launch. That's the problem my work addressed.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-coherence">Coherence Testing</h2>
+    <p data-i18n="coh-p1">As part of my work with RAL Space, I contributed to the development and evaluation of microphone coherence testing methods for DFAN, conducted in close collaboration with <strong>Professor Jonathan Hargreaves</strong> at the <strong>University of Salford</strong>, drawing on his acoustics expertise to refine our experimental methodology and data interpretation.</p>
+    <p data-i18n="coh-p2">I helped configure microphone arrays and run tests measuring <strong>spatial coherence (γ²)</strong> between microphone pairs, the key metric for verifying whether the sound field a DFAN system generates is sufficiently diffuse and uniform, rather than concentrated or spatially correlated in ways that wouldn't match a real launch environment.</p>
+
+    <div class="figure-card figure-card--sm">
+      <img src="dfan_res.png" alt="Coherence heatmap comparing measured microphone coherence against the theoretical sinc-squared model, plotted against normalized distance">
+      <div class="figure-caption" data-i18n="fig-coherence"><strong>Measured coherence versus the theoretical model.</strong> The heatmap shows the density of individual measured coherence values; the red line is their mean, and the black dashed line is the theoretical sinc²(kr) trend a perfectly diffuse field would follow, plotted against normalised distance (kr/π = r/2λ). Comparing the two is what tells you whether the test environment is behaving the way theory says it should.</div>
+    </div>
+
+    <p data-i18n="coh-p3">The closer the measured mean tracks the theoretical curve, the more confidence you can have that the microphone spacing and array configuration are producing a genuinely diffuse field, which is exactly what a DFAN setup needs to faithfully replicate launch conditions.</p>
+    <p data-i18n="coh-p4">One detail that matters here: every microphone pair sits a different physical distance apart, so their coherence-versus-frequency curves don't line up on a shared axis by default, a pair 10cm apart and a pair 50cm apart decorrelate at completely different frequencies even in an identical sound field. Normalising each pair's frequency axis by its own separation, using the dimensionless quantity <em>kr</em> (wavenumber × separation), puts every pair on the same comparable scale. That's what makes the density plot above possible: thousands of individual pair-frequency coherence values from every microphone combination, all falling on one shared axis, compared directly against the theoretical curve.</p>
+    <p data-i18n="coh-p5">This work sits within a wider DFAN research effort at the University of Salford's Acoustics Research Centre, Professor Hargreaves has written publicly about the group's scale-model DFAN testing (linked below), which gives good outside context for the kind of environment this coherence work was validating.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Amplify</h2>
+    <p data-i18n="amp-p1">Running coherence tests by hand, hooking up hardware, capturing data, computing coherence, plotting it, doesn't scale well when you're iterating on array configurations. I built <strong>Amplify</strong>, a Python application that automated and streamlined the testing process, to fix that.</p>
+
+    <div class="eng-list">
+      <div class="eng-item">
+        <h3 data-i18n="eng1-h">One spectral density matrix, not pairwise loops</h3>
+        <p data-i18n="eng1-p">Rather than computing coherence one microphone pair at a time, Amplify builds the full cross-power spectral density matrix across every channel in a single pass, windowed, 50%-overlapped FFTs averaged over the measurement, and derives every pair's magnitude-squared coherence (γ²) from that one matrix. For an array of N microphones that's the difference between one matrix computation and looping over every pair individually.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng2-h">Geometry-aware normalisation</h3>
+        <p data-i18n="eng2-p">Each microphone pair's coherence curve gets resampled onto the shared, dimensionless <em>kr</em> axis described above, so pairs at completely different physical spacings become directly comparable on one plot instead of N separate ones.</p>
+      </div>
+      <div class="eng-item">
+        <h3 data-i18n="eng3-h">Live density plot against the diffuse-field model</h3>
+        <p data-i18n="eng3-p">Rendered the results as the log-scaled coherence density plot shown above, measured data overlaid against the theoretical sinc²(kr) diffuse-field curve, generated live during a test run rather than reconstructed afterwards from saved data.</p>
+      </div>
+    </div>
+
+    <p class="note" data-i18n="note">The original project files aren't available to me anymore, unfortunately, this section describes the method rather than the exact code.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-tools">Tools &amp; Methods</h2>
+    <div class="tool-tags">
+      <span class="tool-tag">Python</span>
+      <span class="tool-tag">MATLAB</span>
+      <span class="tool-tag" data-i18n="tool-spectral">Spectral Analysis (FFT / CPSD)</span>
+      <span class="tool-tag">NI-DAQmx</span>
+      <span class="tool-tag">NumPy</span>
+      <span class="tool-tag">Matplotlib</span>
+      <span class="tool-tag" data-i18n="tool-acoustics">Acoustics</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 data-i18n="h2-colophon">Colophon</h2>
+    <div class="colophon">
+      <div><span class="k" data-i18n="k-role">Role</span><span data-i18n="v-role">Scientific Software Engineer, Industrial Placement</span></div>
+      <div><span class="k" data-i18n="k-org">Organisation</span><span data-i18n="v-org">UK Research and Innovation (UKRI) · Science and Technology Facilities Council</span></div>
+      <div><span class="k" data-i18n="k-facility">Facility</span><span data-i18n="v-facility">RAL Space, Harwell Campus, Oxfordshire</span></div>
+      <div><span class="k" data-i18n="k-collab">Collaboration</span><span data-i18n="v-collab">Professor Jonathan Hargreaves, University of Salford</span></div>
+      <div><span class="k" data-i18n="k-dates">Dates</span><span data-i18n="v-dates">Jul 2024 – Jun 2025</span></div>
+      <div><span class="k" data-i18n="k-related">Related</span><a href="https://lnkd.in/p/dP6ahnXe" target="_blank" rel="noopener" style="text-decoration:underline;" data-i18n="v-related">Prof. Hargreaves on DFAN testing at Salford ↗</a></div>
+      <div><span class="k" data-i18n="k-reference">Reference</span>J. A. Hargreaves &amp; M. Underwood, "Confidence limits for coherence, toward a better understanding of its use as a diffuse field metric for quantifying the quality of Direct Field Acoustic Noise (DFAN) testing systems," Proc. ECSSMET, Sept 2024</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© 2026 Despina Ioannide</p>
+    <a href="../index.html#projects" data-i18n="footer-back">← Back to all projects</a>
+  </div>
+</footer>
+
+<script>
+  function setTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('site-theme', theme);
+  }
+  function toggleTheme(){
+    var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    setTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  setTheme(localStorage.getItem('site-theme') || 'dark');
+</script>
+
+<script>
+  var zhDict = {
+    'back-link': '← 返回主页',
+    'eyebrow': '行业实习 · 英国研究与创新署（UKRI），RAL Space',
+    'sub': '为直接场声学噪声（DFAN）测试进行的麦克风相干性测试，以及我为此开发的软件工具 Amplify。',
+    'photo-credit': '设施照片来自网络，并非作者本人拍摄。',
+    'btn-poster': '查看我的实习海报 ↗',
+    'btn-all': '所有项目',
+
+    'h2-what': 'DFAN 是什么',
+    'what-p1': '航天器必须承受自身发射过程中的声学环境，其声压级足以在航天器抵达轨道之前损坏精密硬件。<strong>直接场声学噪声（DFAN）测试</strong>使用大型扬声器阵列在地面上还原这种环境，而不是采用传统航天器声学鉴定所用的混响室。',
+    'what-p2': '让这个模拟声场足够准确非常关键：如果声场不够扩散、空间分布不够均匀，测试就无法真实还原航天器在发射时实际经历的环境。这正是我的工作要解决的问题。',
+
+    'h2-coherence': '相干性测试',
+    'coh-p1': '作为我在 RAL Space 工作的一部分，我参与了 DFAN 麦克风相干性测试方法的开发与评估，该项目与<strong>索尔福德大学</strong>的 <strong>Jonathan Hargreaves 教授</strong>密切合作完成，借助他在声学领域的专业知识来完善我们的实验方法与数据解读。',
+    'coh-p2': '我协助配置了麦克风阵列，并进行了测量麦克风对之间<strong>空间相干性（γ²）</strong>的测试，这是判断 DFAN 系统产生的声场是否足够扩散均匀的关键指标，而不是集中或存在空间相关性，那样会与真实发射环境不符。',
+    'fig-coherence': '<strong>实测相干性与理论模型的对比。</strong>热力图展示了各次实测相干性数值的分布密度；红线为其均值，黑色虚线为理想扩散场应遵循的理论 sinc²(kr) 趋势，横轴为归一化距离（kr/π = r/2λ）。将两者对比，就能判断测试环境的表现是否符合理论预期。',
+    'coh-p3': '实测均值与理论曲线的吻合程度越高，就越能确信麦克风间距与阵列配置正在产生真正扩散的声场，这正是 DFAN 系统真实还原发射条件所需要的。',
+    'coh-p4': '这里有个关键细节：每一对麦克风之间的物理距离都不相同，因此它们的相干性-频率曲线默认并不会落在同一条轴上，即便在完全相同的声场中，间距10厘米的一对麦克风和间距50厘米的一对麦克风，也会在完全不同的频率上失去相关性。通过用每对麦克风各自的间距对其频率轴进行归一化，使用无量纲量 <em>kr</em>（波数 × 间距），就能把所有麦克风对放到同一可比较的尺度上。这正是上方密度图得以实现的原理：来自每一种麦克风组合、成千上万个独立的相干性数值，全部落在同一条共享坐标轴上，与理论曲线直接比较。',
+    'coh-p5': '这项工作是索尔福德大学声学研究中心更广泛的 DFAN 研究工作的一部分，Hargreaves 教授曾公开撰文介绍该团队的缩比 DFAN 测试（见下方链接），可作为理解这项相干性工作所验证环境的良好背景资料。',
+
+    'amp-p1': '手动运行相干性测试，连接硬件、采集数据、计算相干性、绘图，在反复调整阵列配置时效率很低。为了解决这个问题，我开发了 <strong>Amplify</strong>，一个将整个测试流程自动化、简化的 Python 应用程序。',
+    'eng1-h': '一次性计算功率谱密度矩阵，而非逐对循环',
+    'eng1-p': 'Amplify 不会逐对麦克风计算相干性，而是通过加窗、50% 重叠的 FFT 并在整个测量过程中取平均，一次性构建覆盖所有通道的完整互功率谱密度矩阵，再从这一个矩阵中推导出每一对麦克风的幅度平方相干性（γ²）。对于一个包含 N 个麦克风的阵列来说，这就是"计算一次矩阵"和"逐对循环计算"之间的差别。',
+    'eng2-h': '考虑几何关系的归一化',
+    'eng2-p': '每对麦克风的相干性曲线都会被重新采样到上文所述的共享无量纲 <em>kr</em> 轴上，这样即使物理间距完全不同的麦克风对，也能在同一张图上直接比较，而不需要绘制 N 张单独的图。',
+    'eng3-h': '实时生成对比扩散场模型的密度图',
+    'eng3-p': '将结果渲染为上方展示的对数刻度相干性密度图，实测数据与理论 sinc²(kr) 扩散场曲线叠加显示，且是在测试过程中实时生成，而非事后根据保存的数据重新绘制。',
+    'note': '很遗憾，原始项目文件我已经找不到了，本节描述的是方法本身，而非具体代码。',
+
+    'h2-tools': '工具与方法',
+    'tool-spectral': 'Spectral Analysis（频谱分析，FFT / CPSD）',
+    'tool-acoustics': 'Acoustics（声学）',
+
+    'h2-colophon': '文档信息',
+    'k-role': '职位',
+    'k-org': '所属机构',
+    'k-facility': '科研设施',
+    'k-collab': '合作者',
+    'k-dates': '时间',
+    'k-related': '相关链接',
+    'k-reference': '参考文献',
+    'v-role': '科学软件工程师（行业实习）',
+    'v-org': '英国研究与创新署（UKRI）· 科学技术设施委员会（STFC）',
+    'v-facility': 'RAL Space，英国牛津郡哈韦尔园区',
+    'v-collab': 'Jonathan Hargreaves 教授，索尔福德大学',
+    'v-dates': '2024年7月 – 2025年6月',
+    'v-related': 'Hargreaves 教授谈索尔福德大学的 DFAN 测试 ↗',
+
+    'footer-back': '← 返回所有项目'
+  };
+
+  var currentLang = 'en';
+  var enCache = {};
+
+  function setLang(lang){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(lang === 'zh'){
+        if(!(key in enCache)) enCache[key] = el.innerHTML;
+        if(zhDict[key] !== undefined) el.innerHTML = zhDict[key];
+      } else if(key in enCache){
+        el.innerHTML = enCache[key];
+      }
+    });
+    currentLang = lang;
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.getElementById('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    localStorage.setItem('site-lang', lang);
+  }
+
+  function toggleLang(){
+    setLang(currentLang === 'zh' ? 'en' : 'zh');
+  }
+
+  var savedLang = localStorage.getItem('site-lang');
+  if(savedLang === 'zh') setLang('zh');
+</script>
+
+</body>
+</html>
