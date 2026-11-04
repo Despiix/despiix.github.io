@@ -270,6 +270,11 @@
     margin-top: 3px;
   }
 
+  a.app-card{ transition: border-color 0.2s ease, transform 0.2s ease; }
+  a.app-card:hover{ border-color: var(--accent-deep); transform: translateY(-2px); }
+  .app-icon.alt{ background: linear-gradient(155deg, var(--purple, #8b2d98), var(--accent)); }
+  .app-arrow{ margin-left: auto; font-size: 1.3rem; color: var(--ink-faint); }
+
   /* ---------- FEATURE LIST ---------- */
   .eng-list{ display: flex; flex-direction: column; gap: 18px; margin-top: 8px; }
   .eng-item{ padding-left: 18px; border-left: 2px solid var(--line-strong); }
@@ -446,6 +451,27 @@
 
 <section>
   <div class="wrap">
+    <h2 data-i18n="h2-course">Math Lab</h2>
+    <a class="app-card" href="hidden-rhythm/index.html">
+      <div class="app-icon alt">p(n)</div>
+      <div class="app-meta">
+        <div class="app-name" data-i18n="hr-name">The Hidden Rhythm of Partitions</div>
+        <div class="app-kind" data-i18n="hr-kind">Interactive explainer · Number theory</div>
+      </div>
+      <span class="app-arrow" aria-hidden="true">→</span>
+    </a>
+    <p data-i18n="hr-p">An interactive page that takes integer partitions from Euler's recurrence to Ramanujan's congruences. Every number is computed live in the browser, with exact big integers, and cross-checked against an independent C++ implementation.</p>
+    <div class="tool-tags" style="margin-top:18px;">
+      <span class="tool-tag">JavaScript</span>
+      <span class="tool-tag">Canvas</span>
+      <span class="tool-tag">BigInt</span>
+      <span class="tool-tag">C++</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
     <div class="gh-header">
       <h2 style="margin-bottom:0;" data-i18n="h2-github">From GitHub</h2>
       <a class="gh-profile-link" href="https://github.com/Despiix" target="_blank" rel="noopener" data-i18n="gh-profile">View full profile ↗</a>
@@ -495,6 +521,11 @@
     'eng2-p': '一个真正可以对话的语音聊天机器人，它会听你说的中文，并实时给出纠正。',
     'eng3-h': '为记忆巩固而设计，而不只是复习',
     'eng3-p': '错题重练模式会有针对性地重新出现你真正做错的语法点，而不是对所有内容平均分配练习量，此外还配有连续打卡系统和一整套语法测试。',
+
+    'h2-course': '数学实验室',
+    'hr-name': '分拆数中的隐藏节奏',
+    'hr-kind': '交互式讲解 · 数论',
+    'hr-p': '一个交互式页面，从欧拉递推讲到拉马努金同余式。所有数值都在浏览器中用精确大整数实时计算，并与独立的 C++ 实现交叉核对。',
 
     'h2-github': '来自 GitHub',
     'gh-profile': '查看完整主页 ↗',

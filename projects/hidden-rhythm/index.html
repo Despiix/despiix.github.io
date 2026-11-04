@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hidden Rhythm of Partitions · Despina Ioannide</title>
+<meta name="description" content="An interactive explainer on integer partitions, from Euler's recurrence to Ramanujan's congruences. Every number on the page is computed live in your browser and cross-checked against C++.">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<script>
+  (function(){
+    var t = 'dark';
+    try { t = localStorage.getItem('site-theme') || 'dark'; } catch(e) {}
+    if(t === 'light') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="back-link" href="../personal.html" data-i18n="back-link">← Back to projects</a>
+    <div class="nav-right">
+      <button class="lang-toggle" id="langToggle" type="button">中文</button>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">🌙</button>
+    </div>
+  </div>
+  <div class="progress" id="progress"></div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow label" data-i18n="eyebrow">Interactive explainer · Combinatorics &amp; number theory</div>
+      <h1 class="title" data-i18n="title">The Hidden Rhythm of Partitions</h1>
+      <p class="sub" data-i18n="sub">How many ways can you write a number as a sum? The answers grow explosively, and yet in 1919 Ramanujan spotted a rhythm hiding in them that nobody had seen. This page lets you find it yourself.</p>
+      <div class="ticker" aria-live="off">
+        <span class="k" id="tickK">p(100)</span>
+        <span class="v" id="tickV">…</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#ch1" data-i18n="cta-start">Start scrolling ↓</a>
+        <a class="btn btn-ghost" href="#ch4" data-i18n="cta-skip">Skip to the discovery</a>
+      </div>
+    </div>
+    <div class="hero-viz"><canvas id="heroCanvas" aria-label="Animated dot diagrams of partitions"></canvas></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ CHAPTER 1 ============ -->
+<section class="scene" id="ch1">
+  <div class="wrap">
+    <div class="scene-grid">
+      <div class="scene-text reveal">
+        <div class="chapter" data-i18n="ch1-no">Chapter 1</div>
+        <h2 data-i18n="ch1-h">What is a partition?</h2>
+        <p data-i18n="ch1-p1">A <strong>partition</strong> of n is a way to write n as a sum of positive whole numbers, where order does not matter. The number 4 has five of them: 4, 3+1, 2+2, 2+1+1 and 1+1+1+1.</p>
+        <p data-i18n="ch1-p2">Draw each part as a row of dots and you get a <strong>Ferrers diagram</strong>. Flip it across its diagonal and rows become columns: you get another partition of the same n, called the <strong>conjugate</strong>.</p>
+        <p data-i18n="ch1-p3">That flip is a bijection, the first counting trick in combinatorics: to count one family, count another one that is in perfect one-to-one correspondence with it.</p>
+        <p class="note" data-i18n="ch1-note">Try it: pick a partition, press Conjugate, and watch every dot swap its row and column. Some partitions are their own conjugate.</p>
+      </div>
+      <div class="panel reveal">
+        <div class="controls">
+          <label for="bN" data-i18n="lbl-n">n</label>
+          <span class="val" id="bNval">7</span>
+          <input type="range" id="bN" min="3" max="14" value="7" aria-label="n">
+          <button class="pill" id="bConj" type="button" data-i18n="btn-conj">Conjugate</button>
+        </div>
+        <div class="chips" id="bChips" role="list"></div>
+        <canvas id="bCanvas" aria-label="Ferrers diagram"></canvas>
+        <div class="readout" id="bRead"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 2 ============ -->
+<section class="scene" id="ch2">
+  <div class="wrap">
+    <div class="scene-text reveal" style="max-width:var(--text-max);margin-bottom:26px">
+      <div class="chapter" data-i18n="ch2-no">Chapter 2</div>
+      <h2 data-i18n="ch2-h">Three ways to count</h2>
+      <p data-i18n="ch2-p1">The same question, three algorithms. <strong>Brute force</strong> writes down every partition and counts them. <strong>Dynamic programming</strong> fills a table of smaller subproblems, which is the generating function ∏ 1/(1−x<sup>k</sup>) in disguise. <strong>Euler's pentagonal recurrence</strong> gets each value from only about √n earlier ones.</p>
+      <p data-i18n="ch2-p2">Pick n and press Run. All three must land on the same number, and the work they do is very different.</p>
+    </div>
+    <div class="panel reveal">
+      <div class="controls">
+        <label for="rN" data-i18n="lbl-n">n</label>
+        <span class="val" id="rNval">20</span>
+        <input type="range" id="rN" min="5" max="40" value="20" aria-label="n">
+        <button class="pill" id="rRun" type="button" data-i18n="btn-run">Run</button>
+      </div>
+      <div class="race">
+        <div class="engine">
+          <h3 data-i18n="e1-h">Brute force</h3><span class="cx" data-i18n="e1-cx">visits all p(n) partitions</span>
+          <canvas id="rBruteCanvas" aria-label="Current partition"></canvas>
+          <div class="stat" id="rBruteStat"></div>
+        </div>
+        <div class="engine">
+          <h3 data-i18n="e2-h">Dynamic programming</h3><span class="cx" data-i18n="e2-cx">fills about n² cells</span>
+          <canvas id="rDpCanvas" aria-label="DP table"></canvas>
+          <div class="stat" id="rDpStat"></div>
+        </div>
+        <div class="engine">
+          <h3 data-i18n="e3-h">Pentagonal recurrence</h3><span class="cx" data-i18n="e3-cx">about √n terms</span>
+          <div class="terms" id="rTerms" aria-hidden="true"></div>
+          <div class="stat" id="rPentStat"></div>
+        </div>
+      </div>
+      <div class="readout" id="rRead"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 4 ============ -->
+<section class="scene" id="ch4">
+  <div class="wrap">
+    <div class="scene-grid">
+      <div class="scene-text reveal">
+        <div class="chapter" data-i18n="ch4-no">Chapter 3</div>
+        <h2 data-i18n="ch4-h">Ramanujan's rhythm</h2>
+        <p data-i18n="ch4-p1">Colour every p(n) by its remainder after dividing by m, and lay the values out m to a row. For most m the wall looks like noise.</p>
+        <p data-i18n="ch4-p2">Move the slider to <strong>5</strong>. One whole column goes dark: p(5k+4) is divisible by 5 every single time. Then <strong>7</strong> (column 5) and <strong>11</strong> (column 6) do the same. Ramanujan noticed this in 1919 while reading MacMahon's table of p(n).</p>
+        <div class="eq" data-i18n="ch4-eq">p(5k+4) ≡ 0 (mod 5) &nbsp; p(7k+5) ≡ 0 (mod 7) &nbsp; p(11k+6) ≡ 0 (mod 11)</div>
+        <p data-i18n="ch4-p3">The pattern hunt below runs this scan live for every m from 2 to 36. Besides 5, 7 and 11 it flags 25 and 35. Neither is a new family: 25 is a stronger prime-power congruence (p(25k+24) ≡ 0 mod 25, due to Watson), and 35 follows from 5 and 7 by the Chinese remainder theorem.</p>
+        <p class="note" data-i18n="ch4-note">What you see is a computer check on a finite range, not a proof. The congruences themselves are theorems; the proofs are in the report.</p>
+      </div>
+      <div class="panel reveal">
+        <div class="controls">
+          <label for="wM" data-i18n="lbl-m">modulus m</label>
+          <span class="val" id="wMval">5</span>
+          <input type="range" id="wM" min="2" max="36" value="5" aria-label="modulus m">
+        </div>
+        <div class="wall-wrap">
+          <canvas class="wall-canvas" id="wCanvas" aria-label="Wall of residues of p(n) modulo m"></canvas>
+          <div class="tip" id="wTip"></div>
+        </div>
+        <div class="readout" id="wRead"></div>
+        <div class="hunt-title" data-i18n="hunt">Pattern hunt: m = 2 … 36</div>
+        <div class="chips" id="wHunt" style="max-height:none"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHAPTER 6 ============ -->
+<section class="scene" id="ch6">
+  <div class="wrap">
+    <div class="scene-grid">
+      <div class="scene-text reveal">
+        <div class="chapter" data-i18n="ch6-no">Chapter 4</div>
+        <h2 data-i18n="ch6-h">How big does p(n) get?</h2>
+        <p data-i18n="ch6-p1">Very big, very fast. p(100) has 9 digits, p(1000) has 32, p(10000) has 107. In 1918 Hardy and Ramanujan proved a formula that predicts the size:</p>
+        <div class="eq">p(n) ~ e<sup>π√(2n/3)</sup> / (4n√3)</div>
+        <p data-i18n="ch6-p2">Drag n up to 10,000 and watch the ratio of the formula to the exact value settle toward 1. The exact values here are big integers computed with Euler's recurrence in your browser, no approximation.</p>
+        <p class="note" data-i18n="ch6-note">In every case computed here the formula comes out a little too high. It is the leading form of the first term of Rademacher's exact series; keeping that whole term removes most of the error.</p>
+      </div>
+      <div class="panel reveal">
+        <div class="controls">
+          <label for="aN" data-i18n="lbl-n">n</label>
+          <span class="val" id="aNval">100</span>
+          <input type="range" id="aN" min="0" max="1000" value="500" aria-label="n (logarithmic)">
+        </div>
+        <canvas id="aCanvas" aria-label="Exact p(n) against the Hardy-Ramanujan formula"></canvas>
+        <div class="readout" id="aRead"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OUTRO ============ -->
+<section class="scene" id="outro">
+  <div class="wrap">
+    <div class="scene-text reveal" style="max-width:var(--text-max)">
+      <div class="chapter" data-i18n="out-no">How it was checked</div>
+      <h2 data-i18n="out-h">Nothing on this page is hard-coded</h2>
+      <p data-i18n="out-p">Every value above is computed live. They are also cross-checked against an independent C++ implementation, because that is the habit worth having: turn a counting argument into an algorithm, then verify it a different way.</p>
+    </div>
+    <div class="verify reveal">
+      <div class="vcard"><h4 data-i18n="v1-h">Three algorithms agree</h4><p data-i18n="v1-p">Brute-force generation, DP and Euler's recurrence give identical p(n) wherever they overlap.</p></div>
+      <div class="vcard"><h4 data-i18n="v2-h">JavaScript matches C++</h4><p data-i18n="v2-p">The page compares its own p(n), n ≤ 1000, with a table exported by the C++ programs.</p></div>
+      <div class="vcard"><h4 data-i18n="v3-h">Known values</h4><p data-i18n="v3-p">p(100) = 190,569,292 and p(200) = 3,972,999,029,388 match OEIS A000041.</p></div>
+    </div>
+    <div class="badge" id="vBadge"><i></i><span id="vText" data-i18n="vb-wait">Running self-check…</span></div>
+    <div class="outro-links">
+      <a class="pill" href="report.pdf" target="_blank" rel="noopener" data-i18n="out-report">Read the report (PDF) ↗</a>
+      <a class="pill" href="https://oeis.org/A000041" target="_blank" rel="noopener">OEIS A000041 ↗</a>
+      <a class="pill" href="../personal.html" data-i18n="out-back">← Back to projects</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap footer-row">
+    <p>© 2026 Despina Ioannide</p>
+    <a href="../personal.html" data-i18n="footer-back">← Back to all projects</a>
+  </div>
+</footer>
+
+<noscript><p style="padding:20px;text-align:center">This page needs JavaScript: every number on it is computed live.</p></noscript>
+
+<script src="js/engine.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/scenes.js"></script>
+</body>
+</html>
