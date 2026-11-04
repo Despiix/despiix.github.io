@@ -522,6 +522,20 @@
   })();
 
   /* =====================================================================
+     Typeset the displayed equations with KaTeX (falls back to the plain-text version if it cannot load)
+     ===================================================================== */
+  HR.renderMath = function(){
+    if(!window.katex) return;
+    document.querySelectorAll('.tex').forEach(function(el){
+      try {
+        window.katex.render(el.getAttribute('data-tex'), el, { throwOnError: false, displayMode: el.getAttribute('data-display') === '1' });
+        el.classList.add('done');
+      } catch(e) { /* keep the plain-text fallback */ }
+    });
+  };
+  if(window.katex) HR.renderMath();
+
+  /* =====================================================================
      Reading progress bar + reveal-on-scroll
      ===================================================================== */
   (function chrome(){

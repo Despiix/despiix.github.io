@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" crossorigin="anonymous">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -129,7 +130,11 @@
         <h2 data-i18n="ch4-h">Ramanujan's rhythm</h2>
         <p data-i18n="ch4-p1">Colour every p(n) by its remainder after dividing by m, and lay the values out m to a row. For most m the wall looks like noise.</p>
         <p data-i18n="ch4-p2">Move the slider to <strong>5</strong>. One whole column goes dark: p(5k+4) is divisible by 5 every single time. Then <strong>7</strong> (column 5) and <strong>11</strong> (column 6) do the same. Ramanujan noticed this in 1919 while reading MacMahon's table of p(n).</p>
-        <div class="eq" data-i18n="ch4-eq">p(5k+4) ≡ 0 (mod 5) &nbsp; p(7k+5) ≡ 0 (mod 7) &nbsp; p(11k+6) ≡ 0 (mod 11)</div>
+        <div class="eq mathrow" role="math" aria-label="p(5k+4) ≡ 0 mod 5, p(7k+5) ≡ 0 mod 7, p(11k+6) ≡ 0 mod 11">
+          <span class="tex" data-tex="p(5k+4)\equiv 0 \pmod{5}">p(5k+4) ≡ 0 (mod 5)</span>
+          <span class="tex" data-tex="p(7k+5)\equiv 0 \pmod{7}">p(7k+5) ≡ 0 (mod 7)</span>
+          <span class="tex" data-tex="p(11k+6)\equiv 0 \pmod{11}">p(11k+6) ≡ 0 (mod 11)</span>
+        </div>
         <p data-i18n="ch4-p3">The pattern hunt below runs this scan live for every m from 2 to 36. Besides 5, 7 and 11 it flags 25 and 35. Neither is a new family: 25 is a stronger prime-power congruence (p(25k+24) ≡ 0 mod 25, due to Watson), and 35 follows from 5 and 7 by the Chinese remainder theorem.</p>
         <p class="note" data-i18n="ch4-note">What you see is a computer check on a finite range, not a proof. The congruences themselves are theorems; the proofs are in the report.</p>
       </div>
@@ -159,7 +164,9 @@
         <div class="chapter" data-i18n="ch6-no">Chapter 4</div>
         <h2 data-i18n="ch6-h">How big does p(n) get?</h2>
         <p data-i18n="ch6-p1">Very big, very fast. p(100) has 9 digits, p(1000) has 32, p(10000) has 107. In 1918 Hardy and Ramanujan proved a formula that predicts the size:</p>
-        <div class="eq">p(n) ~ e<sup>π√(2n/3)</sup> / (4n√3)</div>
+        <div class="eq mathrow" role="math" aria-label="p(n) is asymptotic to e to the pi times the square root of 2n over 3, divided by 4 n square root of 3">
+          <span class="tex" data-display="1" data-tex="p(n)\;\sim\;\frac{e^{\pi\sqrt{2n/3}}}{4n\sqrt{3}}">p(n) ~ e^(π√(2n/3)) / (4n√3)</span>
+        </div>
         <p data-i18n="ch6-p2">Drag n up to 10,000 and watch the ratio of the formula to the exact value settle toward 1. The exact values here are big integers computed with Euler's recurrence in your browser, no approximation.</p>
         <p class="note" data-i18n="ch6-note">In every case computed here the formula comes out a little too high. It is the leading form of the first term of Rademacher's exact series; keeping that whole term removes most of the error.</p>
       </div>
@@ -212,5 +219,6 @@
 <script src="js/engine.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/scenes.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" crossorigin="anonymous" onload="HR.renderMath && HR.renderMath()"></script>
 </body>
 </html>
